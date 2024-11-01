@@ -1,0 +1,4 @@
+﻿DataTable dataTable = GetDataTable("Select * from Student"); // You have to implement the ways to retrieve data from the database.
+comboBox1.Datasource = dataTable;
+comboBox1.DisplayMember = StudentName; // Column Name
+comboBox1.ValueMember = StuentId;  // Column Name

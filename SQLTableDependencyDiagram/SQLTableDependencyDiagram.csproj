@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <UseCodebase>true</UseCodebase>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{9F1E99E2-550B-4B37-B5EA-CCCDDC090AF7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SQLTableDependencyDiagram</RootNamespace>
+    <AssemblyName>SQLTableDependencyDiagram</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>true</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <StartAction>Program</StartAction>
+    <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix Exp</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CopyVsixExtensionFiles>True</CopyVsixExtensionFiles>
+    <CopyVsixExtensionLocation>C:\Program Files %28x86%29\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions\SQLTableDependencyDiagram</CopyVsixExtensionLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Commands\ToolsMenu\TestCommand2\TestCommand2.cs" />
+    <Compile Include="Commands\ToolsMenu\TestCommand\ToolsMenu.cs" />
+    <Compile Include="Commands\ToolsMenu\TestCommand\ToolsMenuPackage.cs" />
+    <Compile Include="Controller\DTEApplicationController.cs" />
+    <Compile Include="Forms\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuItems\SqlColumnMenuItem.cs" />
+    <Compile Include="MenuItems\SqlTableMenuItem.cs" />
+    <Compile Include="Models\DataSymbol.cs" />
+    <Compile Include="Models\Employee.cs" />
+    <Compile Include="PartialClasses\Connect_DTE_Events.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Key.snk" />
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="envdte">
+      <Version>17.7.37355</Version>
+    </PackageReference>
+    <PackageReference Include="envdte100">
+      <Version>17.7.37355</Version>
+    </PackageReference>
+    <PackageReference Include="envdte80">
+      <Version>17.7.37355</Version>
+    </PackageReference>
+    <PackageReference Include="envdte90">
+      <Version>17.7.37355</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Data.SqlClient">
+      <Version>5.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SqlServer.Management.SqlParser">
+      <Version>170.9.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects">
+      <Version>170.18.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects.SSMS">
+      <Version>161.47027.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.CommandBars">
+      <Version>17.7.37355</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.SDK">
+      <Version>17.0.32112.339</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.10.0">
+      <Version>17.7.37355</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading">
+      <Version>17.7.30</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.4.2119" />
+    <PackageReference Include="System.ComponentModel">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Unofficial.Sql.Server.Management.Objects">
+      <Version>17.4.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assemblies\ConnectionDlg.dll" />
+    <Content Include="Assemblies\DdsShapesLib.dll" />
+    <Content Include="Assemblies\Interop.ShDocVw.dll" />
+    <Content Include="Assemblies\MDXQueryGenerator.dll" />
+    <Content Include="Assemblies\Microsoft.AnalysisServices.BackEnd.dll" />
+    <Content Include="Assemblies\Microsoft.AnalysisServices.BackEnd.XmlSerializers.dll" />
+    <Content Include="Assemblies\Microsoft.AnalysisServices.Common.dll" />
+    <Content Include="Assemblies\Microsoft.AnalysisServices.Controls.dll" />
+    <Content Include="Assemblies\Microsoft.AnalysisServices.Graphing.dll" />
+    <Content Include="Assemblies\Microsoft.Data.ConnectionUI.Dialog.dll" />
+    <Content Include="Assemblies\Microsoft.Data.ConnectionUI.dll" />
+    <Content Include="Assemblies\Microsoft.Data.DataFeedClient.dll" />
+    <Content Include="Assemblies\Microsoft.DataTransformationServices.Interfaces.dll" />
+    <Content Include="Assemblies\Microsoft.DataWarehouse.dll" />
+    <Content Include="Assemblies\Microsoft.DataWarehouse.SQM.dll" />
+    <Content Include="Assemblies\Microsoft.ReportingServices.DataExtensions.dll" />
+    <Content Include="Assemblies\Microsoft.ReportingServices.Diagnostics.dll" />
+    <Content Include="Assemblies\Microsoft.ReportingServices.Interfaces.dll" />
+    <Content Include="Assemblies\Microsoft.ReportingServices.QueryDesigners.dll" />
+    <Content Include="Assemblies\Microsoft.ReportingServices.ReportDesign.Common.dll" />
+    <Content Include="Assemblies\Microsoft.ReportingServices.RsClient.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.Configuration.SString.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.Management.Controls.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.Management.Sdk.Scripting.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.Management.Sdk.SqlStudio.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.Management.SDK.TaskForms.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.Management.SqlStudio.Controls.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.Management.SqlStudio.Explorer.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.Management.UserSettings.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.Sqm.dll" />
+    <Content Include="Assemblies\Microsoft.SqlServer.StorageClient.dll" />
+    <Content Include="Assemblies\ObjectExplorer.dll" />
+    <Content Include="Assemblies\SQLEditors.dll" />
+    <Content Include="Assemblies\SqlMgmt.dll" />
+    <Content Include="Assemblies\SqlPackageBase.dll" />
+    <Content Include="Assemblies\SqlWorkbench.Interfaces.dll" />
+    <Content Include="Assemblies\SSMSAddin.dll" />
+    <VSCTCompile Include="Commands\ToolsMenu\TestCommand\ToolsMenuPackage.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <Content Include="class diagram\1.png" />
+    <Content Include="class diagram\2.png" />
+    <Content Include="class diagram\3.png" />
+    <Content Include="class diagram\5.png" />
+    <Content Include="class diagram\6.png" />
+    <Content Include="class diagram\7.png" />
+    <Content Include="class diagram\key.png" />
+    <Content Include="Commands\ToolsMenu\TestCommand2\Resources\TestCommand2.png" />
+    <Content Include="Commands\ToolsMenu\TestCommand\Resources\ToolsMenu.png" />
+    <Content Include="Commands\ToolsMenu\TestCommand\Resources\ToolsMenuPackage.ico" />
+    <Content Include="Data\Database.xml" />
+    <Content Include="Data\Database1.xml" />
+    <Content Include="Data\Database2.xml" />
+    <Content Include="Data\DynamicProperties.xml" />
+    <Content Include="Data\OrgLayout.xml" />
+    <Content Include="Data\XML Binding.xml" />
+    <Content Include="Data\XML Binding1.xml" />
+    <Content Include="MockData\DBSchema.xml" />
+    <Content Include="Resources\1453477379_Calculator.png" />
+    <Content Include="Resources\1453477392_hammer_screwdriver.png" />
+    <Content Include="Resources\1453480678_files-folders-15.png" />
+    <Content Include="Resources\1453480682_Table_16x16.png" />
+    <Content Include="Resources\1453480689_table_tab_search.png" />
+    <Content Include="Resources\1453480695_table-add.png" />
+    <Content Include="Resources\1453480700_table-edit.png" />
+    <Content Include="Resources\1453480710_table_sum.png" />
+    <Content Include="Resources\1453480734_table-accept.png" />
+    <Content Include="Resources\1453480774_040.png" />
+    <Content Include="Resources\1453480786_041.png" />
+    <Content Include="Resources\1453480802_database_add.png" />
+    <Content Include="Resources\1453480812_database_save.png" />
+    <Content Include="Resources\diagram.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ConnectionDlg, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\ConnectionDlg.dll</HintPath>
+    </Reference>
+    <Reference Include="DdsShapesLib, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>Assemblies\DdsShapesLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.ShDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>Assemblies\Interop.ShDocVw.dll</HintPath>
+    </Reference>
+    <Reference Include="MDXQueryGenerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\MDXQueryGenerator.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AnalysisServices.BackEnd, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.AnalysisServices.BackEnd.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AnalysisServices.BackEnd.XmlSerializers, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.AnalysisServices.BackEnd.XmlSerializers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AnalysisServices.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.AnalysisServices.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AnalysisServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.AnalysisServices.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AnalysisServices.Graphing, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.AnalysisServices.Graphing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Data.ConnectionUI, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.Data.ConnectionUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.ConnectionUI.Dialog, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.Data.ConnectionUI.Dialog.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.DataFeedClient, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.Data.DataFeedClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DataTransformationServices.Interfaces, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.DataTransformationServices.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DataWarehouse, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.DataWarehouse.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DataWarehouse.SQM, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.DataWarehouse.SQM.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportingServices.DataExtensions, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.ReportingServices.DataExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportingServices.Diagnostics, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.ReportingServices.Diagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportingServices.Interfaces, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.ReportingServices.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportingServices.QueryDesigners, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.ReportingServices.QueryDesigners.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportingServices.ReportDesign.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.ReportingServices.ReportDesign.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportingServices.RsClient, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.ReportingServices.RsClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Configuration.SString, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.Configuration.SString.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.Management.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.Scripting, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.Management.Sdk.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.SqlStudio, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.Management.Sdk.SqlStudio.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.SDK.TaskForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.Management.SDK.TaskForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.SqlStudio.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.Management.SqlStudio.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.SqlStudio.Explorer, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.Management.SqlStudio.Explorer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.UserSettings, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.Management.UserSettings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Sqm, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.Sqm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.StorageClient, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\Microsoft.SqlServer.StorageClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Data.Tools.SqlObjectExplorer, Version=17.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Shell.15.0, Version=17.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Shell.Framework, Version=17.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.10.0, Version=17.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="ObjectExplorer, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\ObjectExplorer.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLEditors, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\SQLEditors.dll</HintPath>
+    </Reference>
+    <Reference Include="SqlMgmt, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\SqlMgmt.dll</HintPath>
+    </Reference>
+    <Reference Include="SqlPackageBase, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\SqlPackageBase.dll</HintPath>
+    </Reference>
+    <Reference Include="SqlWorkbench.Interfaces, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\SqlWorkbench.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SSMSAddin, Version=1.0.5869.18335, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Assemblies\SSMSAddin.dll</HintPath>
+    </Reference>
+    <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Syncfusion.Diagram.Base, Version=22.1460.34.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
+    <Reference Include="Syncfusion.Diagram.Windows, Version=22.1460.34.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
+    <Reference Include="Syncfusion.Licensing, Version=22.1460.34.0, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL" />
+    <Reference Include="Syncfusion.Shared.Base, Version=22.1460.34.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
+    <Reference Include="Syncfusion.Shared.Windows, Version=22.1460.34.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Commands\ToolsMenu\TestCommand\VSPackage.resx">
+      <MergeWithCTO>true</MergeWithCTO>
+      <ManifestResourceName>VSPackage</ManifestResourceName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

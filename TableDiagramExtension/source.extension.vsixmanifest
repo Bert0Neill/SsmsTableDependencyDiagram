@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="AutoTableDiagramExtension.0d78cf91-8492-4f16-acdc-d27c716d3b03" Version="1.2" Language="en-US" Publisher="Bert O'Neill" />
+        <DisplayName>AutoTableDiagramExtension</DisplayName>
+        <Description xml:space="preserve">This SSMS 'Table Diagram Extension' will quickly get the related tables to a selected table, and create an ER diagram. Showing the references, prinary and foreign keys between the tables (including self-references).
+To which, you can export as an image or print the disgram.
+
+The concept is to get you up to speed on a sub-section of the database schema - not all the schema at one, but creating bite sized diagrams, of related tables.
+For e.g. you may be working with a banking database, but it has tables that are goverment oriented or tavbles that are specifically related certain typ[es of transactions.
+Instead of trying to understand the full schema and then make your way to the sub-section of tables, just give all the tables related to a particular table I am interested in.</Description>
+        <Icon>database_storage_server_network_file_icon_190636.ico</Icon>
+        <PreviewImage>Extended View Table with multiple FKs.png</PreviewImage>
+        <Tags>SSMS Extension ERD Diagrams</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Version="[17.0,18.0)" Id="Microsoft.VisualStudio.Community">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    </Dependencies>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,18.0)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    </Assets>
+</PackageManifest>
