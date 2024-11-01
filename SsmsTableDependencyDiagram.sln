@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableDiagramExtension", "TableDiagramExtension\TableDiagramExtension.csproj", "{69F3E40D-1BF9-4647-8EF0-13FAE6E51F02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.Extension", "TableDiagramExtension\SsmsTableDependencyDiagram.Extension.csproj", "{69F3E40D-1BF9-4647-8EF0-13FAE6E51F02}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4C6F2D64-5916-4490-AC8F-E52F1DA4A127}"
 EndProject
@@ -24,13 +24,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6) Misc", "6) Misc", "{A53D
 		TableDiagramExtension\Misc\Table dependency Diagram - User Guide.docx = TableDiagramExtension\Misc\Table dependency Diagram - User Guide.docx
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.Domain", "SsmsTableDependencyDiagram.Domain\SsmsTableDependencyDiagram.Domain.csproj", "{8C3C4BAC-9F23-4953-B2C8-C77082B21C81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SsmsTableDependencyDiagram.Domain", "SsmsTableDependencyDiagram.Domain\SsmsTableDependencyDiagram.Domain.csproj", "{8C3C4BAC-9F23-4953-B2C8-C77082B21C81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.Application", "SsmsTableDependencyDiagram.Application\SsmsTableDependencyDiagram.Application.csproj", "{85C07EB7-AB32-45B0-8CF5-E2CC81C6DFDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SsmsTableDependencyDiagram.Application", "SsmsTableDependencyDiagram.Application\SsmsTableDependencyDiagram.Application.csproj", "{85C07EB7-AB32-45B0-8CF5-E2CC81C6DFDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.Infrastructure", "SsmsTableDependencyDiagram.Infrastructure\SsmsTableDependencyDiagram.Infrastructure.csproj", "{456B66A5-9CCD-4CEC-B477-699C2E445D37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SsmsTableDependencyDiagram.Infrastructure", "SsmsTableDependencyDiagram.Infrastructure\SsmsTableDependencyDiagram.Infrastructure.csproj", "{456B66A5-9CCD-4CEC-B477-699C2E445D37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.MsTests", "SsmsTableDependencyDiagram.MsTests\SsmsTableDependencyDiagram.MsTests.csproj", "{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SsmsTableDependencyDiagram.MsTests", "SsmsTableDependencyDiagram.MsTests\SsmsTableDependencyDiagram.MsTests.csproj", "{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
