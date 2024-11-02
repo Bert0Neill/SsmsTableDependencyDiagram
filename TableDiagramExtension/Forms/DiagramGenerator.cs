@@ -83,9 +83,6 @@ namespace DatabaseDiagram
                 sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
                 
                 _sharedData = sharedData;
-                //_sqlService = new SQLController();
-                //_errorService = new ErrorController();
-                //_xmlService = new XMLController();
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -124,7 +121,6 @@ namespace DatabaseDiagram
             this.sqlDependencyDiagram.EventSink.NodeMouseEnter += EventSink_NodeMouseEnter;
             this.sqlDependencyDiagram.EventSink.NodeMouseLeave += EventSink_NodeMouseLeave;
 
-
             this.sqlDependencyDiagram.View.SelectionList.Clear();
         }
         #endregion
@@ -138,8 +134,8 @@ namespace DatabaseDiagram
             try
             {
                 this.sqlDependencyDiagram.View.SelectionList.Clear();                
-                this.sqlDependencyDiagram.Model.LineRoutingEnabled = true; //enabling for model
                 this.sqlDependencyDiagram.Controller.ActivateTool("PanTool");
+
             }
             catch (Exception ex)
             {
@@ -371,10 +367,7 @@ namespace DatabaseDiagram
             {
                 // Temporarily suspend the Diagram Model redrawing
                 this.sqlDependencyDiagram.Model.BeginUpdate();
-
-                // route connector lines around obstacles
-                this.sqlDependencyDiagram.Model.LineRouter.DistanceToObstacles = 10;
-                this.sqlDependencyDiagram.Model.LineRouter.RoutingMode = RoutingMode.Automatic;
+                this.sqlDependencyDiagram.Model.LineBridgingEnabled = true;
 
                 foreach (CustomDiagramTable table in aryTables)
                 {
@@ -484,10 +477,6 @@ namespace DatabaseDiagram
                         if (relation == TextStrings.OneToOne) ortholink.HeadDecorator.DecoratorShape = DecoratorShape.None;
                         else ortholink.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
 
-                        //ortholink.LineRoutingEnabled = true; //enabling roting to connector
-                        
-                        ortholink.LineBridgingEnabled = true; //enabling for link object
-
                         //specify head and tail port point to the connector
                         refTableSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
                         refTableSymbol.Ports[1].TryConnect(ortholink.TailEndPoint);
@@ -508,10 +497,6 @@ namespace DatabaseDiagram
 
                         if (relation == TextStrings.OneToOne) ortholink.HeadDecorator.DecoratorShape = DecoratorShape.None;
                         else ortholink.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
-
-                        //ortholink.LineRoutingEnabled = true; //enabling roting to connector
-
-                        ortholink.LineBridgingEnabled = true; //enabling for link object
 
                         this.sqlDependencyDiagram.Model.AppendChild(ortholink);
 
