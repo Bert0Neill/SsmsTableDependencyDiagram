@@ -1,7 +1,9 @@
-﻿namespace TableDiagramExtension.Interfaces
+﻿using System;
+
+namespace TableDiagramExtension.Controllers
 {
-    internal interface IErrorController
+    public interface IErrorController
     {
-        void DisplayErrorMessage(string message);
+        void LogAndDisplayErrorMessage(Exception exception);
     }
 }

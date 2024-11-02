@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using TableDiagramExtension.Classes;
 using TableDiagramExtension.Models;
 
-namespace TableDiagramExtension.Interfaces
+namespace TableDiagramExtension.Controllers
 {
     internal interface ISQLController
     {

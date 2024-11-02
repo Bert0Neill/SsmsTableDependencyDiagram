@@ -3,12 +3,9 @@
 // Use of this code is subject to the terms of our license.
 // Any infringement will be prosecuted under applicable laws. 
 #endregion
-//using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.Shell;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Syncfusion.SVG.IO;
 using Syncfusion.Windows.Forms.Diagram;
-using Syncfusion.Windows.Forms.Diagram.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,9 +14,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using TableDiagramExtension.Classes;
@@ -33,48 +28,15 @@ namespace DatabaseDiagram
 {
     public partial class DiagramGenerator : Form
     {
-        //private ILogger _logger;
-
-        //private void ConfigureSerilog()
-        //{
-        //    ThreadHelper.ThrowIfNotOnUIThread();
-
-        //    string assemblyPath = Assembly.GetExecutingAssembly().Location;
-        //    DriveInfo driveInfo = new DriveInfo(Path.GetPathRoot(assemblyPath));
-
-        //    var logDirectory = Path.Combine(driveInfo.Name, @"Logs\SSMS Table Dependency VSIX");
-
-        //    // Generate a log file name based on today's date
-        //    var logFileName = $"log_{DateTime.Today:yyyy-MM-dd}.txt";
-        //    var logFilePath = Path.Combine(logDirectory, logFileName);
-
-        //    // Ensure the directory exists
-        //    if (!Directory.Exists(logDirectory)) Directory.CreateDirectory(logDirectory);
-
-        //    // Serilog.Debugging.SelfLog.Enable(Console.Error); // enable to debug Serilog!
-
-        //    // Configure Serilog with various sinks
-        //    _logger = new LoggerConfiguration()
-        //        .MinimumLevel.Debug()
-        //        .WriteTo.Console()  // Console sink for debugging
-        //        .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)  // Log to a file
-        //        .CreateLogger();
-
-        //    // Optional: Redirect Serilog's static Log class
-        //    Log.Logger = _logger;
-
-        //    _logger.Information("VSIX Package initialized.");
-        //}
-
         #region Members
         SharedData _sharedData = null;
         public string fileName;
         private Node prevbNode = null;
         private OpenFileDialog fileDialog = new OpenFileDialog();
 
-        private readonly ISQLController _sqlController;
-        private readonly IErrorController _errorController;
-        private readonly XMLController _xmlController;
+        private readonly ISQLController _sqlService;
+        private readonly IErrorController _errorService;
+        private readonly IXMLController _xmlService;
         private DatabaseMetaData selectedTable = null;
         private bool IsCompact;
 
@@ -83,6 +45,10 @@ namespace DatabaseDiagram
         #region Form initialize
         public DiagramGenerator()
         {
+            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
+            _sqlService = ServiceProviderContainer.ServiceProvider.GetService<ISQLController>(); // inject database handling service
+            _xmlService = ServiceProviderContainer.ServiceProvider.GetService<IXMLController>(); // inject XML handling service
+
             InitializeComponent();
             sqlDependencyDiagram.BeginUpdate();
             this.sqlDependencyDiagram.Model.BoundaryConstraintsEnabled = false;
@@ -92,8 +58,8 @@ namespace DatabaseDiagram
             DiagramAppearance();
             sqlDependencyDiagram.EndUpdate();
 
-            //ConfigureSerilog();
             sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
+
             Log.Information("Initialised DiagramGenerator ctor");
         }
 
@@ -101,6 +67,10 @@ namespace DatabaseDiagram
         {
             try
             {
+                _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
+                _sqlService = ServiceProviderContainer.ServiceProvider.GetService<ISQLController>(); // inject database handling service
+                _xmlService = ServiceProviderContainer.ServiceProvider.GetService<IXMLController>(); // inject XML handling service
+
                 InitializeComponent();
                 sqlDependencyDiagram.BeginUpdate();
                 this.sqlDependencyDiagram.Model.BoundaryConstraintsEnabled = false;
@@ -112,16 +82,15 @@ namespace DatabaseDiagram
                 sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
                 
                 _sharedData = sharedData;
-                _sqlController = new SQLController();
-                _errorController = new ErrorController();
-                _xmlController = new XMLController();
+                //_sqlService = new SQLController();
+                //_errorService = new ErrorController();
+                //_xmlService = new XMLController();
 
-                //ConfigureSerilog();
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -173,7 +142,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -218,7 +187,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -299,7 +268,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -320,7 +289,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -384,7 +353,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
 
             return lstTables;
@@ -417,7 +386,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -439,7 +408,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -460,7 +429,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
                 return Symbol;
             }
         }
@@ -566,7 +535,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -619,7 +588,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -640,7 +609,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -672,7 +641,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -695,7 +664,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -718,7 +687,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -742,7 +711,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -754,7 +723,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -766,7 +735,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -778,7 +747,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }        
 
@@ -800,7 +769,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -818,7 +787,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
         #endregion
@@ -837,7 +806,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -856,7 +825,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -873,7 +842,7 @@ namespace DatabaseDiagram
                 this.cboTable.Enabled = false;
 
                 // retrieve dropdown values
-                activeDBs = _sqlController.RetrieveDatabases(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString);
+                activeDBs = _sqlService.RetrieveDatabases(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString);
 
                 activeDBs.Insert(0, TextStrings.PleaseSelectDatabase);
 
@@ -886,7 +855,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
             finally { Cursor.Current = Cursors.Default; }
         }
@@ -906,7 +875,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
             finally { Cursor.Current = Cursors.Default; }
         }
@@ -923,7 +892,7 @@ namespace DatabaseDiagram
 
                 if (selectedDatabase == TextStrings.PleaseSelectDatabase) return;
 
-                initialData = _sqlController.RetrieveDatabaseMetaData(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase);
+                initialData = _sqlService.RetrieveDatabaseMetaData(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase);
 
                 initialData.Insert(0, new DatabaseMetaData() { TABLE_NAME = TextStrings.PleaseSelectTable });
 
@@ -940,7 +909,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
             finally { Cursor.Current = Cursors.Default;}
         }
@@ -976,17 +945,17 @@ namespace DatabaseDiagram
                 selectedTable = (DatabaseMetaData)this.cboTable.ComboBox.SelectedValue;
 
                 // call SQL to get dependency tables
-                var dependencyTables = _sqlController.RetrieveDependencyTables(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase, $"[{selectedTable.TABLE_SCHEMA}].[{selectedTable.TABLE_NAME}]");
+                var dependencyTables = _sqlService.RetrieveDependencyTables(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase, $"[{selectedTable.TABLE_SCHEMA}].[{selectedTable.TABLE_NAME}]");
                 dependencyTables.Add(selectedTable.TABLE_NAME);
 
                 // call SQL to build XML of dependency tables (inc. selected table)
-                var dependencyTablesMetaDataXML = _sqlController.RetrieveDependencyTablesMetaData(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase, dependencyTables);
+                var dependencyTablesMetaDataXML = _sqlService.RetrieveDependencyTablesMetaData(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase, dependencyTables);
 
                 // add multiple PK's to XML
-                string updatedXml = _xmlController.GenerateXmlDocFromDBData(dependencyTablesMetaDataXML);
+                string updatedXml = _xmlService.GenerateXmlDocFromDBData(dependencyTablesMetaDataXML);
 
                 // get relationship data
-                DataTable Relationships = _sqlController.RetrieveRelationshipData(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase, dependencyTables);
+                DataTable Relationships = _sqlService.RetrieveRelationshipData(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase, dependencyTables);
 
                 InitializeDiagramFromXMLData(updatedXml, Relationships, dependencyTables, isCompact);
 
@@ -998,7 +967,7 @@ namespace DatabaseDiagram
             }
             catch (Exception ex)
             {
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
             finally { Cursor.Current = Cursors.Default; }
         }

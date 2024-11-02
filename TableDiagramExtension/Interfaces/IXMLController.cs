@@ -3,7 +3,7 @@ using System.Xml;
 
 namespace TableDiagramExtension.Interfaces
 {
-    internal interface IXMLController
+    public interface IXMLController
     {        
         string GenerateXmlDocFromDBData(string xmlString);
     }

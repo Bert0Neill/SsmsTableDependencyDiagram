@@ -12,7 +12,7 @@ using TableDiagramExtension.Resources;
 
 namespace TableDiagramExtension.Controllers
 {
-    internal class SQLController : ISQLController
+    public class SQLController : ISQLController
     {
         ConvertController _convertController;
         ErrorController _errorController;
@@ -26,11 +26,11 @@ namespace TableDiagramExtension.Controllers
         public List<DatabaseMetaData> RetrieveDatabaseMetaData(string initialConnectionString, string activeDatabase)
         {
             try
-            {                
+            {
                 List<DatabaseMetaData> metadata = new List<DatabaseMetaData>();
                 string connectionString = initialConnectionString.Replace(SqlStatements.Multiple_Active_Result_Sets, SqlStatements.MultipleActiveResultSets).Replace(SqlStatements.Trust_Server_Certificate, SqlStatements.TrustServerCertificate);
                 string sql = String.Format(SqlStatements.SelectDatabaseTables, activeDatabase);
-                DataTable results = new DataTable() ;
+                DataTable results = new DataTable();
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, new SqlConnection(connectionString)))
                 {
                     dataAdapter.Fill(results);
@@ -44,7 +44,7 @@ namespace TableDiagramExtension.Controllers
             {
                 Log.Error(ex.StackTrace); // serilog
 
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorController.LogAndDisplayErrorMessage(ex);
                 return Enumerable.Empty<DatabaseMetaData>().ToList();
             }
         }
@@ -67,7 +67,7 @@ namespace TableDiagramExtension.Controllers
             {
                 Log.Error(ex.StackTrace); // serilog
 
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorController.LogAndDisplayErrorMessage(ex);
                 return Enumerable.Empty<string>().ToList();
             }
         }
@@ -80,7 +80,7 @@ namespace TableDiagramExtension.Controllers
 
                 connectionString = connectionString.Replace(SqlStatements.Multiple_Active_Result_Sets, SqlStatements.MultipleActiveResultSets).Replace(SqlStatements.Trust_Server_Certificate, SqlStatements.TrustServerCertificate);
                 string sql = String.Format(SqlStatements.SelectDependencyTableName, selectedDatabase, selectedTable);
-                
+
                 DataTable results = new DataTable();
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, new SqlConnection(connectionString)))
                 {
@@ -93,7 +93,7 @@ namespace TableDiagramExtension.Controllers
             {
                 Log.Error(ex.StackTrace); // serilog
 
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorController.LogAndDisplayErrorMessage(ex);
                 return Enumerable.Empty<string>().ToList();
             }
         }
@@ -107,7 +107,7 @@ namespace TableDiagramExtension.Controllers
                 string delimTables = "'" + String.Join("','", dependencyTables) + "'";
                 string connectionString = initialConnectionString.Replace(SqlStatements.Multiple_Active_Result_Sets, SqlStatements.MultipleActiveResultSets).Replace(SqlStatements.Trust_Server_Certificate, SqlStatements.TrustServerCertificate);
                 string sql = String.Format(SqlStatements.SelectDependencyTableInfo, activeDatabase, delimTables);
-                
+
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, new SqlConnection(connectionString)))
                 {
                     dataAdapter.Fill(results);
@@ -118,14 +118,14 @@ namespace TableDiagramExtension.Controllers
                         dependencyXml.Append(row[0].ToString());
                     }
                 }
-              
+
                 return dependencyXml.ToString();
             }
             catch (Exception ex)
             {
                 Log.Error(ex.StackTrace); // serilog
 
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorController.LogAndDisplayErrorMessage(ex);
                 return string.Empty;
             }
         }
@@ -152,7 +152,7 @@ namespace TableDiagramExtension.Controllers
             {
                 Log.Error(ex.StackTrace); // serilog
 
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorController.LogAndDisplayErrorMessage(ex);
                 return results;
             }
         }

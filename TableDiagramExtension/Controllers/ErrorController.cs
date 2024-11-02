@@ -6,17 +6,18 @@ using TableDiagramExtension.Resources;
 
 namespace TableDiagramExtension.Controllers
 {
-    internal class ErrorController : IErrorController
+    public class ErrorController : IErrorController
     {
-        public ErrorController()
-        {
-        }
+        public ErrorController() { }
 
-        public void DisplayErrorMessage(string message)
+        public void LogAndDisplayErrorMessage(Exception exception)
         {
-            VsixExtensionLogger.LogError(message); // debugger Visual Studio logger
-            MessageBox.Show(String.Format(TextStrings.StandardErrorMessage, message), TextStrings.StandardErrorMessageTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Console.WriteLine(message);
+            string compositeErrorMessage = $"Error: {exception.Message} Stack Trace: {exception.StackTrace}";
+#if DEBUG            
+            Log.Error(compositeErrorMessage);
+#endif
+            VsixExtensionLogger.LogError(compositeErrorMessage); // log error in Microsoft's ActivityLog.xml
+            MessageBox.Show(String.Format(TextStrings.StandardErrorMessage, exception.Message), TextStrings.StandardErrorMessageTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

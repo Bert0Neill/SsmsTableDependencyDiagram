@@ -8,7 +8,7 @@ using TableDiagramExtension.Resources;
 
 namespace TableDiagramExtension.Controllers
 {
-    internal class XMLController : IXMLController
+    public class XMLController : IXMLController
     {
         ErrorController _errorController;
 
@@ -98,7 +98,7 @@ namespace TableDiagramExtension.Controllers
             {
                 Log.Error(ex.StackTrace); // serilog
 
-                _errorController.DisplayErrorMessage(ex.Message);
+                _errorController.LogAndDisplayErrorMessage(ex);
                 //MessageBox.Show(ex.Message, TextStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return string.Empty;
             }

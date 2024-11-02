@@ -8,7 +8,7 @@ using TableDiagramExtension.Interfaces;
 
 namespace TableDiagramExtension.Controllers
 {
-    internal class ConvertController
+    public class ConvertController : IConvertController
     {
         ErrorController _errorController;
 
@@ -31,12 +31,10 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
-                Log.Error(ex.StackTrace); // serilog
-                _errorController.DisplayErrorMessage(ex.Message);
-                //MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _errorController.LogAndDisplayErrorMessage(ex);
             }
 
-            return data;          
+            return data;
         }
         private T GetItem<T>(DataRow dr)
         {

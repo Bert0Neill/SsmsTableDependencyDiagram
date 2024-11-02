@@ -1,4 +1,5 @@
-﻿using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
@@ -16,6 +17,7 @@ using System.Windows.Forms;
 using TableDiagramExtension.Classes;
 using TableDiagramExtension.Controllers;
 using Task = System.Threading.Tasks.Task;
+
 
 namespace TableDiagramExtension
 {
@@ -46,6 +48,7 @@ namespace TableDiagramExtension
         public const string PackageGuidString = "1bc97246-6e95-4741-88c7-e6b2496e371f";
         internal SharedData _sharedData { get; set; }
         private ILogger _logger;
+        private IErrorController _errorService;
 
         #endregion
 
@@ -68,11 +71,11 @@ namespace TableDiagramExtension
                 var exception = (Exception)e.ExceptionObject;
                 Log.Error(exception, "Unhandled exception occurred.");
             };
-
-            _sharedData = new SharedData();
-
+            
+            ServiceProviderContainer.ConfigureServices(); // Configure DI services
+            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
+            _sharedData = new SharedData(); // instantiate shared data between forms
             SetObjectExplorerEventProvider(); // register SMO node selection event
-
             RetrieveSelectedExplorerNode(); // determine the server\database selected (use it's connection string)
 
             // When initialized asynchronously, the current thread may be a background thread at this point.
@@ -107,7 +110,7 @@ namespace TableDiagramExtension
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -156,7 +159,7 @@ namespace TableDiagramExtension
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
@@ -180,6 +183,7 @@ namespace TableDiagramExtension
             }
             catch (Exception ex)
             {
+                Log.Error(ex.StackTrace);
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
