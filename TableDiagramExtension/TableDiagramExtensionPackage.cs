@@ -7,11 +7,13 @@ using Syncfusion.Windows.Forms.Diagram;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using TableDiagramExtension.Classes;
+using TableDiagramExtension.Controllers;
 using Task = System.Threading.Tasks.Task;
 
 namespace TableDiagramExtension
@@ -55,6 +57,8 @@ namespace TableDiagramExtension
         /// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
+            VsixExtensionLogger.LogInformation("Starting SSMS table dependency diagram.");
+
             _sharedData = new SharedData();
 
             SetObjectExplorerEventProvider(); // register SMO node selection event

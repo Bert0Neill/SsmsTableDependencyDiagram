@@ -3,7 +3,9 @@
 // Use of this code is subject to the terms of our license.
 // Any infringement will be prosecuted under applicable laws. 
 #endregion
-using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Shell;
+using Serilog;
 using Syncfusion.SVG.IO;
 using Syncfusion.Windows.Forms.Diagram;
 using Syncfusion.Windows.Forms.Diagram.Controls;
@@ -15,7 +17,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using TableDiagramExtension.Classes;
@@ -29,6 +33,43 @@ namespace DatabaseDiagram
 {
     public partial class DiagramGenerator : Form
     {
+        private ILogger _logger;
+
+        private void ConfigureSerilog()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            // Set up the log file path
+            //var logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SSMS Table Dependency VSIX");
+
+            string assemblyPath = Assembly.GetExecutingAssembly().Location;
+            DriveInfo driveInfo = new DriveInfo(Path.GetPathRoot(assemblyPath));
+
+            var logDirectory = Path.Combine(driveInfo.Name, @"Logs\SSMS Table Dependency VSIX");
+
+            // Generate a log file name based on today's date
+            var logFileName = $"log_{DateTime.Today:yyyy-MM-dd}.txt";
+            var logFilePath = Path.Combine(logDirectory, logFileName);
+
+            // Ensure the directory exists
+            if (!Directory.Exists(logDirectory)) Directory.CreateDirectory(logDirectory);
+
+            Serilog.Debugging.SelfLog.Enable(Console.Error);
+
+
+            // Configure Serilog with various sinks
+            _logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()  // Console sink for debugging
+                //.WriteTo.File(logFilePath)  // Log to a file
+                .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)  // Log to a file
+                .CreateLogger();
+
+            // Optional: Redirect Serilog's static Log class
+            Log.Logger = _logger;            
+            Log.Logger.Information("Started...");
+        }
+
         #region Members
         SharedData _sharedData = null;
         public string fileName;
@@ -55,6 +96,7 @@ namespace DatabaseDiagram
             DiagramAppearance();
             sqlDependencyDiagram.EndUpdate();
 
+            ConfigureSerilog();
             sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
         }
 
@@ -71,13 +113,14 @@ namespace DatabaseDiagram
                 DiagramAppearance();
                 sqlDependencyDiagram.EndUpdate();
                 sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
-
+                
                 _sharedData = sharedData;
                 _sqlController = new SQLController();
                 _errorController = new ErrorController();
                 _xmlController = new XMLController();
 
-                VsixExtensionLogger.LogInformation("Starting SSMS table dependency diagram.");
+                ConfigureSerilog();
+                _logger.Information("VSIX Package initialized.");
             }
             catch (Exception ex)
             {
@@ -826,6 +869,8 @@ namespace DatabaseDiagram
         {
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
+
                 List<string> activeDBs;
                 this.cboDatabase.Enabled = false;
                 this.cboTable.Enabled = false;
@@ -846,12 +891,15 @@ namespace DatabaseDiagram
             {
                 _errorController.DisplayErrorMessage(ex.Message);
             }
+            finally { Cursor.Current = Cursors.Default; }
         }
 
         private void cboTable_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
+
                 this.viewSplitToolStripSplitButton.Enabled = false;
                 DatabaseMetaData selectedTable = (DatabaseMetaData)this.cboTable.ComboBox.SelectedValue;
 
@@ -863,6 +911,7 @@ namespace DatabaseDiagram
             {
                 _errorController.DisplayErrorMessage(ex.Message);
             }
+            finally { Cursor.Current = Cursors.Default; }
         }
 
         private void cboDatabase_SelectedIndexChanged(object sender, EventArgs e)
@@ -923,6 +972,8 @@ namespace DatabaseDiagram
         {
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
+
                 // get server & table name
                 string selectedDatabase = this.cboDatabase.ComboBox.SelectedValue.ToString();
                 selectedTable = (DatabaseMetaData)this.cboTable.ComboBox.SelectedValue;
@@ -952,6 +1003,7 @@ namespace DatabaseDiagram
             {
                 _errorController.DisplayErrorMessage(ex.Message);
             }
+            finally { Cursor.Current = Cursors.Default; }
         }
     }
 }

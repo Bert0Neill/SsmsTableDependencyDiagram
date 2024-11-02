@@ -8,8 +8,11 @@ namespace TableDiagramExtension.Controllers
 {
     using Microsoft.VisualStudio.Shell;
     using System;
+    using System.IO;
+    using System.Windows.Forms;
 
     /// <summary>
+    /// When using /log as a command line argument check the following path
     /// Check file for details: %AppData%\Microsoft\VisualStudio\{Version}\ActivityLog.xml
     /// </summary>
     public class VsixExtensionLogger
@@ -28,8 +31,12 @@ namespace TableDiagramExtension.Controllers
 
         public static void LogError(string message)
         {
+            string basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            message += $"Please review the ActivityLog.xml file, located under {basePath}";
+
             ThreadHelper.ThrowIfNotOnUIThread();
             ActivityLog.LogError("SSMS Table Dependency", message);
+            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
