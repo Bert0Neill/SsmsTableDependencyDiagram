@@ -22,6 +22,7 @@ using TableDiagramExtension.Controllers;
 using TableDiagramExtension.Interfaces;
 using TableDiagramExtension.Models;
 using TableDiagramExtension.Resources;
+using static System.Windows.Forms.LinkLabel;
 using static TableDiagramExtension.Models.CustomDiagramTable;
 
 namespace DatabaseDiagram
@@ -483,8 +484,9 @@ namespace DatabaseDiagram
                         if (relation == TextStrings.OneToOne) ortholink.HeadDecorator.DecoratorShape = DecoratorShape.None;
                         else ortholink.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
 
-                        //enabling roting to connector
-                        ortholink.LineRoutingEnabled = true;
+                        //ortholink.LineRoutingEnabled = true; //enabling roting to connector
+                        
+                        ortholink.LineBridgingEnabled = true; //enabling for link object
 
                         //specify head and tail port point to the connector
                         refTableSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
@@ -507,26 +509,25 @@ namespace DatabaseDiagram
                         if (relation == TextStrings.OneToOne) ortholink.HeadDecorator.DecoratorShape = DecoratorShape.None;
                         else ortholink.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
 
-                        ortholink.LineRoutingEnabled = true;
+                        //ortholink.LineRoutingEnabled = true; //enabling roting to connector
+
+                        ortholink.LineBridgingEnabled = true; //enabling for link object
 
                         this.sqlDependencyDiagram.Model.AppendChild(ortholink);
 
                         refTableSymbol.CentralPort.TryConnect(ortholink.TailEndPoint);
                         parentSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
 
-                        ////adding label to connector (relationship lname)
-                        //Syncfusion.Windows.Forms.Diagram.Label label = new Syncfusion.Windows.Forms.Diagram.Label(ortholink, "ProductCategoryID");
-                        //label.FontColorStyle.Color = Color.Red;
-                        //ortholink.Labels.Add(label);
-
+                        //// add relationship name label
                         //Syncfusion.Windows.Forms.Diagram.Label label = new Syncfusion.Windows.Forms.Diagram.Label();
                         //label.Text = "Connector";
                         //label.FontStyle.Family = "Arial";
-                        //label.FontColorStyle.Color = Color.Black;
+                        //label.FontColorStyle.Color = Color.Red;
                         //label.VerticalAlignment = StringAlignment.Center;
                         //label.UpdatePosition = true;
                         //label.Position = Position.Center;
                         //label.BackgroundStyle.Color = Color.Transparent;
+                        //label.Orientation = LabelOrientation.Horizontal;
                         //ortholink.Labels.Add(label);
                     }
                 }

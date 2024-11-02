@@ -1,11 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TextManager.Interop;
 using Serilog;
-using Syncfusion.Licensing;
-using Syncfusion.Windows.Forms.Diagram;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
