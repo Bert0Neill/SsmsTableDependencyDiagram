@@ -179,7 +179,7 @@ namespace DatabaseDiagram
 
                 foreach (DataRow row in Relationships.Rows)
                 {
-                    ConnectNodes(sqlDependencyDiagram.Model.Nodes[(string)row["ReferencedTableName"]], sqlDependencyDiagram.Model.Nodes[(string)row["ParentTableName"]], (string)row["RelationshipType"]);
+                    ConnectNodes(sqlDependencyDiagram.Model.Nodes[(string)row["ReferencedTableName"]], sqlDependencyDiagram.Model.Nodes[(string)row["ParentTableName"]], (string)row["RelationshipType"], (string)row["ReferencedColumnName"]);
                 }
             }
             catch (Exception ex)
@@ -434,12 +434,23 @@ namespace DatabaseDiagram
         /// <param name="refTableSymbol">Parent</param>
         /// <param name="parentSymbol">Child</param>
         /// <param name="relation">relationship</param>
-        private void ConnectNodes(Node refTableSymbol, Node parentSymbol, string relation)
+        private void ConnectNodes(Node refTableSymbol, Node parentSymbol, string relation, string referencedColumnName)
         {
             try
             {
                 if (refTableSymbol.CentralPort != null && parentSymbol.CentralPort != null)
                 {
+                    // add relationship name label
+                    Syncfusion.Windows.Forms.Diagram.Label label = new Syncfusion.Windows.Forms.Diagram.Label();
+                    label.Text = referencedColumnName.Length > 20 ? referencedColumnName.Substring(0, 20) : referencedColumnName; // limit label size
+                    label.FontStyle.Family = "Arial";
+                    label.FontColorStyle.Color = Color.Red;
+                    label.VerticalAlignment = StringAlignment.Center;
+                    label.UpdatePosition = true;
+                    label.Position = Position.Center;
+                    label.BackgroundStyle.Color = Color.Transparent;
+                    label.Orientation = LabelOrientation.Horizontal;
+
                     // check if self referencing join
                     if (refTableSymbol.Name == parentSymbol.Name)
                     {
@@ -481,6 +492,8 @@ namespace DatabaseDiagram
                         refTableSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
                         refTableSymbol.Ports[1].TryConnect(ortholink.TailEndPoint);
 
+                        // ortholink.Labels.Add(label);  // add ref table column to connector
+
                         this.sqlDependencyDiagram.Model.AppendChild(ortholink);
                     }
                     else
@@ -503,17 +516,7 @@ namespace DatabaseDiagram
                         refTableSymbol.CentralPort.TryConnect(ortholink.TailEndPoint);
                         parentSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
 
-                        //// add relationship name label
-                        //Syncfusion.Windows.Forms.Diagram.Label label = new Syncfusion.Windows.Forms.Diagram.Label();
-                        //label.Text = "Connector";
-                        //label.FontStyle.Family = "Arial";
-                        //label.FontColorStyle.Color = Color.Red;
-                        //label.VerticalAlignment = StringAlignment.Center;
-                        //label.UpdatePosition = true;
-                        //label.Position = Position.Center;
-                        //label.BackgroundStyle.Color = Color.Transparent;
-                        //label.Orientation = LabelOrientation.Horizontal;
-                        //ortholink.Labels.Add(label);
+                        ortholink.Labels.Add(label);  // add ref table column to connector
                     }
                 }
 
