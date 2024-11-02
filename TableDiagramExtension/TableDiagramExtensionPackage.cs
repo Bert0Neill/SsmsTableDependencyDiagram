@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
+using Serilog;
 using Syncfusion.Licensing;
 using Syncfusion.Windows.Forms.Diagram;
 using System;
@@ -44,6 +45,8 @@ namespace TableDiagramExtension
         #region Class Variables
         public const string PackageGuidString = "1bc97246-6e95-4741-88c7-e6b2496e371f";
         internal SharedData _sharedData { get; set; }
+        private ILogger _logger;
+
         #endregion
 
         #region Package Members
@@ -57,7 +60,14 @@ namespace TableDiagramExtension
         /// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            VsixExtensionLogger.LogInformation("Starting SSMS table dependency diagram.");
+            ConfigureSerilog(); // initialise logging
+
+            // Global exception handling
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                var exception = (Exception)e.ExceptionObject;
+                Log.Error(exception, "Unhandled exception occurred.");
+            };
 
             _sharedData = new SharedData();
 
@@ -172,6 +182,37 @@ namespace TableDiagramExtension
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void ConfigureSerilog()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            string assemblyPath = Assembly.GetExecutingAssembly().Location;
+            DriveInfo driveInfo = new DriveInfo(Path.GetPathRoot(assemblyPath));
+
+            var logDirectory = Path.Combine(driveInfo.Name, @"Logs\SSMS Table Dependency VSIX");
+
+            // Generate a log file name based on today's date
+            var logFileName = $"log_{DateTime.Today:yyyy-MM-dd}.txt";
+            var logFilePath = Path.Combine(logDirectory, logFileName);
+
+            // Ensure the directory exists
+            if (!Directory.Exists(logDirectory)) Directory.CreateDirectory(logDirectory);
+
+            // Serilog.Debugging.SelfLog.Enable(Console.Error); // enable to debug Serilog!
+
+            // Configure Serilog with various sinks
+            _logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()  // Console sink for debugging
+                .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)  // Log to a file
+                .CreateLogger();
+
+            // redirect Serilog's static Log class
+            Log.Logger = _logger;
+
+            _logger.Information("VSIX Package (TableDiagramExtensionPackage) initialised.");
         }
     }
 }

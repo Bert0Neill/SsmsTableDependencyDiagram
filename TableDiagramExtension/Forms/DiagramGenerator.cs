@@ -33,38 +33,38 @@ namespace DatabaseDiagram
 {
     public partial class DiagramGenerator : Form
     {
-        private ILogger _logger;
+        //private ILogger _logger;
 
-        private void ConfigureSerilog()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
+        //private void ConfigureSerilog()
+        //{
+        //    ThreadHelper.ThrowIfNotOnUIThread();
 
-            string assemblyPath = Assembly.GetExecutingAssembly().Location;
-            DriveInfo driveInfo = new DriveInfo(Path.GetPathRoot(assemblyPath));
+        //    string assemblyPath = Assembly.GetExecutingAssembly().Location;
+        //    DriveInfo driveInfo = new DriveInfo(Path.GetPathRoot(assemblyPath));
 
-            var logDirectory = Path.Combine(driveInfo.Name, @"Logs\SSMS Table Dependency VSIX");
+        //    var logDirectory = Path.Combine(driveInfo.Name, @"Logs\SSMS Table Dependency VSIX");
 
-            // Generate a log file name based on today's date
-            var logFileName = $"log_{DateTime.Today:yyyy-MM-dd}.txt";
-            var logFilePath = Path.Combine(logDirectory, logFileName);
+        //    // Generate a log file name based on today's date
+        //    var logFileName = $"log_{DateTime.Today:yyyy-MM-dd}.txt";
+        //    var logFilePath = Path.Combine(logDirectory, logFileName);
 
-            // Ensure the directory exists
-            if (!Directory.Exists(logDirectory)) Directory.CreateDirectory(logDirectory);
+        //    // Ensure the directory exists
+        //    if (!Directory.Exists(logDirectory)) Directory.CreateDirectory(logDirectory);
 
-            // Serilog.Debugging.SelfLog.Enable(Console.Error); // enable to debug Serilog!
+        //    // Serilog.Debugging.SelfLog.Enable(Console.Error); // enable to debug Serilog!
 
-            // Configure Serilog with various sinks
-            _logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console()  // Console sink for debugging
-                .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)  // Log to a file
-                .CreateLogger();
+        //    // Configure Serilog with various sinks
+        //    _logger = new LoggerConfiguration()
+        //        .MinimumLevel.Debug()
+        //        .WriteTo.Console()  // Console sink for debugging
+        //        .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)  // Log to a file
+        //        .CreateLogger();
 
-            // Optional: Redirect Serilog's static Log class
-            Log.Logger = _logger;
+        //    // Optional: Redirect Serilog's static Log class
+        //    Log.Logger = _logger;
 
-            _logger.Information("VSIX Package initialized.");
-        }
+        //    _logger.Information("VSIX Package initialized.");
+        //}
 
         #region Members
         SharedData _sharedData = null;
@@ -92,8 +92,9 @@ namespace DatabaseDiagram
             DiagramAppearance();
             sqlDependencyDiagram.EndUpdate();
 
-            ConfigureSerilog();
+            //ConfigureSerilog();
             sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
+            Log.Information("Initialised DiagramGenerator ctor");
         }
 
         public DiagramGenerator(SharedData sharedData)
@@ -115,7 +116,8 @@ namespace DatabaseDiagram
                 _errorController = new ErrorController();
                 _xmlController = new XMLController();
 
-                ConfigureSerilog();                
+                //ConfigureSerilog();
+                Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
             catch (Exception ex)
             {
