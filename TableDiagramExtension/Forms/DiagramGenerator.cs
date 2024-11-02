@@ -76,6 +76,8 @@ namespace DatabaseDiagram
                 _sqlController = new SQLController();
                 _errorController = new ErrorController();
                 _xmlController = new XMLController();
+
+                VsixExtensionLogger.LogInformation("Starting SSMS table dependency diagram.");
             }
             catch (Exception ex)
             {
@@ -502,6 +504,11 @@ namespace DatabaseDiagram
 
                         refTableSymbol.CentralPort.TryConnect(ortholink.TailEndPoint);
                         parentSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
+
+                        ////adding label to connector (relationship lname)
+                        //Syncfusion.Windows.Forms.Diagram.Label label = new Syncfusion.Windows.Forms.Diagram.Label(ortholink, "ProductCategoryID");
+                        //label.FontColorStyle.Color = Color.Red;
+                        //ortholink.Labels.Add(label);
                     }
                 }
 
@@ -516,7 +523,6 @@ namespace DatabaseDiagram
         #endregion
 
         #region Event Handlers
-
 
         private void EventSink_NodeMouseLeave(NodeMouseEventArgs evtArgs)
         {
@@ -882,14 +888,22 @@ namespace DatabaseDiagram
 
         private void compactViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             IsCompact = true;
             this.GenerateDiagram(true);
+
+            Cursor.Current = Cursors.Default;
         }
 
         private void dataTypeViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             IsCompact = false;
             this.GenerateDiagram(false);
+
+            Cursor.Current = Cursors.Default;
         }
 
         private void GenerateDiagram(bool isCompact = true)

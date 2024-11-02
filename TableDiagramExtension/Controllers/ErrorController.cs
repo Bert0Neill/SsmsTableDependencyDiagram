@@ -13,6 +13,7 @@ namespace TableDiagramExtension.Controllers
 
         public void DisplayErrorMessage(string message)
         {
+            VsixExtensionLogger.LogError(message);
             MessageBox.Show(String.Format(TextStrings.StandardErrorMessage, message), TextStrings.StandardErrorMessageTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Console.WriteLine(message);
         }
