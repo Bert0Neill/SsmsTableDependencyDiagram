@@ -39,9 +39,6 @@ namespace DatabaseDiagram
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            // Set up the log file path
-            //var logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SSMS Table Dependency VSIX");
-
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
             DriveInfo driveInfo = new DriveInfo(Path.GetPathRoot(assemblyPath));
 
@@ -54,20 +51,19 @@ namespace DatabaseDiagram
             // Ensure the directory exists
             if (!Directory.Exists(logDirectory)) Directory.CreateDirectory(logDirectory);
 
-            Serilog.Debugging.SelfLog.Enable(Console.Error);
-
+            // Serilog.Debugging.SelfLog.Enable(Console.Error); // enable to debug Serilog!
 
             // Configure Serilog with various sinks
             _logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()  // Console sink for debugging
-                //.WriteTo.File(logFilePath)  // Log to a file
                 .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)  // Log to a file
                 .CreateLogger();
 
             // Optional: Redirect Serilog's static Log class
-            Log.Logger = _logger;            
-            Log.Logger.Information("Started...");
+            Log.Logger = _logger;
+
+            _logger.Information("VSIX Package initialized.");
         }
 
         #region Members
@@ -119,8 +115,7 @@ namespace DatabaseDiagram
                 _errorController = new ErrorController();
                 _xmlController = new XMLController();
 
-                ConfigureSerilog();
-                _logger.Information("VSIX Package initialized.");
+                ConfigureSerilog();                
             }
             catch (Exception ex)
             {
