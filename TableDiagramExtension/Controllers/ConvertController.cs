@@ -1,16 +1,20 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Windows.Forms;
+using TableDiagramExtension.Interfaces;
 
 namespace TableDiagramExtension.Controllers
 {
     internal class ConvertController
     {
+        ErrorController _errorController;
+
         public ConvertController()
         {
-                
+            _errorController = new ErrorController();
         }
 
         public List<T> ConvertDataTable<T>(DataTable dt)
@@ -27,7 +31,9 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Log.Error(ex.StackTrace); // serilog
+                _errorController.DisplayErrorMessage(ex.Message);
+                //MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return data;          

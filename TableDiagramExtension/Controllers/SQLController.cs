@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using TableDiagramExtension.Interfaces;
 using TableDiagramExtension.Models;
 using TableDiagramExtension.Resources;
@@ -24,7 +26,7 @@ namespace TableDiagramExtension.Controllers
         public List<DatabaseMetaData> RetrieveDatabaseMetaData(string initialConnectionString, string activeDatabase)
         {
             try
-            {
+            {                
                 List<DatabaseMetaData> metadata = new List<DatabaseMetaData>();
                 string connectionString = initialConnectionString.Replace(SqlStatements.Multiple_Active_Result_Sets, SqlStatements.MultipleActiveResultSets).Replace(SqlStatements.Trust_Server_Certificate, SqlStatements.TrustServerCertificate);
                 string sql = String.Format(SqlStatements.SelectDatabaseTables, activeDatabase);
@@ -40,6 +42,8 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
+                Log.Error(ex.StackTrace); // serilog
+
                 _errorController.DisplayErrorMessage(ex.Message);
                 return Enumerable.Empty<DatabaseMetaData>().ToList();
             }
@@ -61,6 +65,8 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
+                Log.Error(ex.StackTrace); // serilog
+
                 _errorController.DisplayErrorMessage(ex.Message);
                 return Enumerable.Empty<string>().ToList();
             }
@@ -85,6 +91,8 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
+                Log.Error(ex.StackTrace); // serilog
+
                 _errorController.DisplayErrorMessage(ex.Message);
                 return Enumerable.Empty<string>().ToList();
             }
@@ -115,6 +123,8 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
+                Log.Error(ex.StackTrace); // serilog
+
                 _errorController.DisplayErrorMessage(ex.Message);
                 return string.Empty;
             }
@@ -140,6 +150,8 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
+                Log.Error(ex.StackTrace); // serilog
+
                 _errorController.DisplayErrorMessage(ex.Message);
                 return results;
             }

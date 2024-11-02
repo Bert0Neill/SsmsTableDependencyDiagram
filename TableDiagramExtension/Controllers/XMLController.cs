@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -9,7 +10,11 @@ namespace TableDiagramExtension.Controllers
 {
     internal class XMLController : IXMLController
     {
-        public XMLController() { }
+        ErrorController _errorController;
+
+        public XMLController() {
+            _errorController = new ErrorController();
+        }
 
         public string GenerateXmlDocFromDBData(string xmlString)
         {
@@ -91,7 +96,10 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, TextStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Log.Error(ex.StackTrace); // serilog
+
+                _errorController.DisplayErrorMessage(ex.Message);
+                //MessageBox.Show(ex.Message, TextStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return string.Empty;
             }
         }
