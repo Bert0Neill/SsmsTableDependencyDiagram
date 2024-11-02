@@ -509,6 +509,16 @@ namespace DatabaseDiagram
                         //Syncfusion.Windows.Forms.Diagram.Label label = new Syncfusion.Windows.Forms.Diagram.Label(ortholink, "ProductCategoryID");
                         //label.FontColorStyle.Color = Color.Red;
                         //ortholink.Labels.Add(label);
+
+                        //Syncfusion.Windows.Forms.Diagram.Label label = new Syncfusion.Windows.Forms.Diagram.Label();
+                        //label.Text = "Connector";
+                        //label.FontStyle.Family = "Arial";
+                        //label.FontColorStyle.Color = Color.Black;
+                        //label.VerticalAlignment = StringAlignment.Center;
+                        //label.UpdatePosition = true;
+                        //label.Position = Position.Center;
+                        //label.BackgroundStyle.Color = Color.Transparent;
+                        //ortholink.Labels.Add(label);
                     }
                 }
 
@@ -859,6 +869,8 @@ namespace DatabaseDiagram
         {
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
+
                 List<DatabaseMetaData> initialData;
                 string selectedDatabase = this.cboDatabase.ComboBox.SelectedValue.ToString();
                 this.cboTable.Enabled = false;
@@ -884,6 +896,7 @@ namespace DatabaseDiagram
             {
                 _errorController.DisplayErrorMessage(ex.Message);
             }
+            finally { Cursor.Current = Cursors.Default;}
         }
 
         private void compactViewToolStripMenuItem_Click(object sender, EventArgs e)
