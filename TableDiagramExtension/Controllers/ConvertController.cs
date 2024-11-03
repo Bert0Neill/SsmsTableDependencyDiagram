@@ -1,20 +1,18 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
-using System.Windows.Forms;
-using TableDiagramExtension.Interfaces;
 
 namespace TableDiagramExtension.Controllers
 {
     public class ConvertController : IConvertController
     {
-        ErrorController _errorController;
+        private readonly IErrorController _errorService;
 
         public ConvertController()
         {
-            _errorController = new ErrorController();
+            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
         }
 
         public List<T> ConvertDataTable<T>(DataTable dt)
@@ -31,7 +29,7 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
-                _errorController.LogAndDisplayErrorMessage(ex);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
 
             return data;

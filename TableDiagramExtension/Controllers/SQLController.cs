@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,13 +15,13 @@ namespace TableDiagramExtension.Controllers
 {
     public class SQLController : ISQLController
     {
-        ConvertController _convertController;
-        ErrorController _errorController;
+        private readonly IConvertController _convertService;
+        private readonly IErrorController _errorService;
 
         public SQLController()
         {
-            _convertController = new ConvertController();
-            _errorController = new ErrorController();
+            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
+            _convertService = ServiceProviderContainer.ServiceProvider.GetService<IConvertController>(); // inject convert handling service
         }
 
         public List<DatabaseMetaData> RetrieveDatabaseMetaData(string initialConnectionString, string activeDatabase)
@@ -36,15 +37,13 @@ namespace TableDiagramExtension.Controllers
                     dataAdapter.Fill(results);
                 }
 
-                metadata = _convertController.ConvertDataTable<DatabaseMetaData>(results);
+                metadata = _convertService.ConvertDataTable<DatabaseMetaData>(results);
 
                 return metadata;
             }
             catch (Exception ex)
             {
-                Log.Error(ex.StackTrace); // serilog
-
-                _errorController.LogAndDisplayErrorMessage(ex);
+                _errorService.LogAndDisplayErrorMessage(ex);
                 return Enumerable.Empty<DatabaseMetaData>().ToList();
             }
         }
@@ -65,9 +64,7 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
-                Log.Error(ex.StackTrace); // serilog
-
-                _errorController.LogAndDisplayErrorMessage(ex);
+                _errorService.LogAndDisplayErrorMessage(ex);
                 return Enumerable.Empty<string>().ToList();
             }
         }
@@ -91,9 +88,7 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
-                Log.Error(ex.StackTrace); // serilog
-
-                _errorController.LogAndDisplayErrorMessage(ex);
+                _errorService.LogAndDisplayErrorMessage(ex);
                 return Enumerable.Empty<string>().ToList();
             }
         }
@@ -123,9 +118,7 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
-                Log.Error(ex.StackTrace); // serilog
-
-                _errorController.LogAndDisplayErrorMessage(ex);
+                _errorService.LogAndDisplayErrorMessage(ex);
                 return string.Empty;
             }
         }
@@ -150,9 +143,7 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
-                Log.Error(ex.StackTrace); // serilog
-
-                _errorController.LogAndDisplayErrorMessage(ex);
+                _errorService.LogAndDisplayErrorMessage(ex);
                 return results;
             }
         }

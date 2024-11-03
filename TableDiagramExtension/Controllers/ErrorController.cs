@@ -16,6 +16,7 @@ namespace TableDiagramExtension.Controllers
 #if DEBUG            
             Log.Error(compositeErrorMessage);
 #endif
+            Log.Error(exception.Message);
             VsixExtensionLogger.LogError(compositeErrorMessage); // log error in Microsoft's ActivityLog.xml
             MessageBox.Show(String.Format(TextStrings.StandardErrorMessage, exception.Message), TextStrings.StandardErrorMessageTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }

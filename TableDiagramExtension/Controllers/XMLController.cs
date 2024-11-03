@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System;
 using System.Windows.Forms;
 using System.Xml;
@@ -10,10 +11,11 @@ namespace TableDiagramExtension.Controllers
 {
     public class XMLController : IXMLController
     {
-        ErrorController _errorController;
+        private readonly IErrorController _errorService;
 
-        public XMLController() {
-            _errorController = new ErrorController();
+        public XMLController() 
+        {
+            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
         }
 
         public string GenerateXmlDocFromDBData(string xmlString)
@@ -96,10 +98,7 @@ namespace TableDiagramExtension.Controllers
             }
             catch (Exception ex)
             {
-                Log.Error(ex.StackTrace); // serilog
-
-                _errorController.LogAndDisplayErrorMessage(ex);
-                //MessageBox.Show(ex.Message, TextStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _errorService.LogAndDisplayErrorMessage(ex);
                 return string.Empty;
             }
         }
