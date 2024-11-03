@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 
-namespace TableDiagramExtension.Controllers
+namespace SsmsTableDependencyDiagram.Application.Services
 {
     public class ConvertController : IConvertController
     {
         private readonly IErrorController _errorService;
 
-        public ConvertController()
+        public ConvertController(IErrorController errorService)
         {
-            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
+            _errorService = errorService;
         }
 
         public List<T> ConvertDataTable<T>(DataTable dt)

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using SsmsTableDependencyDiagram.Application.Interfaces;
+﻿using SsmsTableDependencyDiagram.Application.Interfaces;
 using SsmsTableDependencyDiagram.Domain.Models;
 using SsmsTableDependencyDiagram.Domain.Resources;
 using System;
@@ -9,17 +8,17 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
-namespace TableDiagramExtension.Controllers
+namespace SsmsTableDependencyDiagram.Infrastructure.Services
 {
     public class SQLController : ISQLController
     {
         private readonly IConvertController _convertService;
         private readonly IErrorController _errorService;
 
-        public SQLController()
+        public SQLController(IErrorController errorService, IConvertController convertService)
         {
-            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
-            _convertService = ServiceProviderContainer.ServiceProvider.GetService<IConvertController>(); // inject convert handling service
+            _errorService = errorService;
+            _convertService = convertService;
         }
 
         public List<DatabaseMetaData> RetrieveDatabaseMetaData(string initialConnectionString, string activeDatabase)

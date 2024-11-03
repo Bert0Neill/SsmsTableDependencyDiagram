@@ -1,10 +1,10 @@
 ﻿using Serilog;
 using System;
+using SsmsTableDependencyDiagram.Application.Interfaces;
 using System.Windows.Forms;
 using SsmsTableDependencyDiagram.Domain.Resources;
-using SsmsTableDependencyDiagram.Application.Interfaces;
 
-namespace TableDiagramExtension.Controllers
+namespace SsmsTableDependencyDiagram.Infrastructure.Services
 {
     public class ErrorController : IErrorController
     {

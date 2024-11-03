@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.VisualStudio.Shell;
+using System;
+using System.Windows.Forms;
 
-namespace TableDiagramExtension.Controllers
+namespace SsmsTableDependencyDiagram.Infrastructure.Services
 {
-    using Microsoft.VisualStudio.Shell;
-    using System;
-    using System.IO;
-    using System.Windows.Forms;
-
     /// <summary>
     /// When using /log as a command line argument check the following path
     /// Check file for details: %AppData%\Microsoft\VisualStudio\{Version}\ActivityLog.xml
@@ -36,7 +29,6 @@ namespace TableDiagramExtension.Controllers
 
             ThreadHelper.ThrowIfNotOnUIThread();
             ActivityLog.LogError("SSMS Table Dependency", message);
-            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 

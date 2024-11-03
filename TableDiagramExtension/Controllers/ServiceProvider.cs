@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SsmsTableDependencyDiagram.Application.Interfaces;
+using SsmsTableDependencyDiagram.Application.Services;
+using SsmsTableDependencyDiagram.Infrastructure.Services;
 
 namespace TableDiagramExtension.Controllers
 {
@@ -11,13 +13,12 @@ namespace TableDiagramExtension.Controllers
         {
             var serviceCollection = new ServiceCollection();
 
-            // Register your services here
+            // Register your services
             serviceCollection.AddSingleton<IErrorController, ErrorController>();
             serviceCollection.AddSingleton<IConvertController, ConvertController>();
             serviceCollection.AddSingleton<ISQLController, SQLController>();
             serviceCollection.AddSingleton<IErrorController, ErrorController>();
             serviceCollection.AddSingleton<IXMLController, XMLController>();
-            
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
         }

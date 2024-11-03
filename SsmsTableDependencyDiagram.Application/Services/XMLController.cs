@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 using SsmsTableDependencyDiagram.Application.Interfaces;
 using SsmsTableDependencyDiagram.Domain.Resources;
 using System;
@@ -7,15 +6,15 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace TableDiagramExtension.Controllers
+namespace SsmsTableDependencyDiagram.Application.Services
 {
     public class XMLController : IXMLController
     {
         private readonly IErrorController _errorService;
 
-        public XMLController() 
+        public XMLController(IErrorController errorService) 
         {
-            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
+            _errorService = errorService;
         }
 
         public string GenerateXmlDocFromDBData(string xmlString)
