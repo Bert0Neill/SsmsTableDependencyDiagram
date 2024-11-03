@@ -209,7 +209,7 @@ namespace TableDiagramExtension
             _logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()  // Console sink for debugging
-                .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)  // Log to a file
+                .WriteTo.File(logFilePath)  // No rolling interval; custom date format is handled in file name
                 .CreateLogger();
 
             // redirect Serilog's static Log class

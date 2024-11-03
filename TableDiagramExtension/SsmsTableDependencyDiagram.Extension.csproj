@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="Commands\MenuDiagramCommand.cs" />
     <Compile Include="Commands\TableContextMenuDiagram.cs" />
-    <Compile Include="Controllers\ServiceProvider.cs" />
+    <Compile Include="Middleware\ServiceProvider.cs" />
     <Compile Include="Forms\DiagramGenerator.cs">
       <SubType>Form</SubType>
     </Compile>
