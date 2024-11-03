@@ -102,8 +102,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Misc\AdventureWorksLT2014.bak" />
-    <None Include="Misc\Table dependency Diagram - User Guide.docx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -215,7 +213,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Misc\SqlWorkbench.Interfaces.dll" />
     <None Include="Resources\Resource_ForeignKey.png" />
   </ItemGroup>
   <ItemGroup>
