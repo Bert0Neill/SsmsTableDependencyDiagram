@@ -31,7 +31,7 @@ namespace DatabaseDiagram
     {
         #region Members
         private bool IsCompact;
-        private ISharedData _sharedData = null;
+        private SharedData _sharedData = null;
         //public string fileName;
         private Node prevbNode = null;
         private OpenFileDialog fileDialog = new OpenFileDialog();
@@ -45,7 +45,7 @@ namespace DatabaseDiagram
         #region Form initialize
         public DiagramGenerator() { }
 
-        public DiagramGenerator(ISharedData sharedData)
+        public DiagramGenerator(SharedData sharedData)
         {
             try
             {

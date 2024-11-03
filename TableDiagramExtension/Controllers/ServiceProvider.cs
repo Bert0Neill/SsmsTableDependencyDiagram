@@ -18,7 +18,6 @@ namespace TableDiagramExtension.Controllers
             serviceCollection.AddSingleton<ISQLController, SQLController>();
             serviceCollection.AddSingleton<IErrorController, ErrorController>();
             serviceCollection.AddSingleton<IXMLController, XMLController>();
-            serviceCollection.AddSingleton<ISharedData, SharedData>();
             
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
