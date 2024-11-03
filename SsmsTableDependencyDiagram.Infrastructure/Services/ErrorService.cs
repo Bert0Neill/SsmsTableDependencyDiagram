@@ -6,9 +6,9 @@ using SsmsTableDependencyDiagram.Domain.Resources;
 
 namespace SsmsTableDependencyDiagram.Infrastructure.Services
 {
-    public class ErrorController : IErrorController
+    public class ErrorService : IErrorService
     {
-        public ErrorController() { }
+        public ErrorService() { }
 
         public void LogAndDisplayErrorMessage(Exception exception)
         {
@@ -17,7 +17,7 @@ namespace SsmsTableDependencyDiagram.Infrastructure.Services
             Log.Error(compositeErrorMessage);
 #endif
             Log.Error(exception.Message);
-            VsixExtensionLogger.LogError(compositeErrorMessage); // log error in Microsoft's ActivityLog.xml
+            VsixLoggerService.LogError(compositeErrorMessage); // log error in Microsoft's ActivityLog.xml
             MessageBox.Show(String.Format(TextStrings.StandardErrorMessage, exception.Message), TextStrings.StandardErrorMessageTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }

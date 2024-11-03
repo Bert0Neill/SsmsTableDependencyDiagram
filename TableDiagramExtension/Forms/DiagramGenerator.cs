@@ -5,6 +5,7 @@
 #endregion
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using SsmsTableDependencyDiagram.Application.Commands;
 using SsmsTableDependencyDiagram.Application.Interfaces;
 using SsmsTableDependencyDiagram.Domain.Models;
 using SsmsTableDependencyDiagram.Domain.Resources;
@@ -34,9 +35,13 @@ namespace DatabaseDiagram
         private OpenFileDialog fileDialog = new OpenFileDialog();
         private DatabaseMetaData selectedTable = null;
 
-        private readonly ISQLController _sqlService;
-        private readonly IErrorController _errorService;
-        private readonly IXMLController _xmlService;
+        private readonly ISQLService _sqlService;
+        private readonly IErrorService _errorService;
+        private readonly IXMLService _xmlService;
+        #endregion
+
+        #region Commands
+        private readonly ICommand<string> _myButtonClickCommand;
         #endregion
 
         #region Form initialize
@@ -47,9 +52,13 @@ namespace DatabaseDiagram
             try
             {
                 // dependency inject classes
-                _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>();
-                _sqlService = ServiceProviderContainer.ServiceProvider.GetService<ISQLController>();
-                _xmlService = ServiceProviderContainer.ServiceProvider.GetService<IXMLController>();
+                _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorService>();
+                _sqlService = ServiceProviderContainer.ServiceProvider.GetService<ISQLService>();
+                _xmlService = ServiceProviderContainer.ServiceProvider.GetService<IXMLService>();
+
+                //_myButtonClickCommand = myButtonClickCommand;
+                //_myButtonClickCommand.Execute("Hello");
+                //viewSplitToolStripSplitButton.Enabled = _myButtonClickCommand.CanExecute("InitialParameter");
 
                 InitializeComponent();
                 sqlDependencyDiagram.BeginUpdate();
@@ -887,8 +896,19 @@ namespace DatabaseDiagram
             Cursor.Current = Cursors.Default;
         }
 
-        private void dataTypeViewToolStripMenuItem_Click(object sender, EventArgs e)
+        private void extendedViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //string parameter = textBoxInput.Text; // Assume a TextBox for user input
+
+            //if (_myButtonClickCommand.CanExecute(parameter))
+            //{
+            //    _myButtonClickCommand.Execute(parameter);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Command cannot execute with the provided input.");
+            //}
+
             Cursor.Current = Cursors.WaitCursor;
 
             IsCompact = false;

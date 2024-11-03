@@ -302,24 +302,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\MyButtonClickCommand.cs" />
     <Compile Include="Interfaces\ICommand.cs" />
-    <Compile Include="Interfaces\IConvertController.cs" />
-    <Compile Include="Interfaces\IErrorController.cs" />
-    <Compile Include="Interfaces\ISQLController.cs" />
-    <Compile Include="Interfaces\IXMLController.cs" />
+    <Compile Include="Interfaces\IConvertService.cs" />
+    <Compile Include="Interfaces\IErrorService.cs" />
+    <Compile Include="Interfaces\ISQLService.cs" />
+    <Compile Include="Interfaces\IXMLService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Services\ConvertController.cs" />
+    <Compile Include="Services\ConvertService.cs" />
     <Compile Include="Services\DiagramGeneratorService.cs" />
-    <Compile Include="Services\XMLController.cs" />
+    <Compile Include="Services\XMLService.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\SsmsTableDependencyDiagram.Domain\SsmsTableDependencyDiagram.Domain.csproj">
       <Project>{db76a4c5-d5ca-49f4-b75e-7ba721e09c5a}</Project>

@@ -3,7 +3,7 @@ using System.Data;
 
 namespace SsmsTableDependencyDiagram.Application.Interfaces
 {
-    public interface IConvertController
+    public interface IConvertService
     {
         List<T> ConvertDataTable<T>(DataTable dt);
     }

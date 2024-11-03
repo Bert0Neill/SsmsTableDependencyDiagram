@@ -12,4 +12,10 @@ namespace SsmsTableDependencyDiagram.Application.Interfaces
         bool CanExecute { get; }
     }
 
+    public interface ICommand<T>
+    {
+        void Execute(T parameter);
+        bool CanExecute(T parameter);
+    }
+
 }

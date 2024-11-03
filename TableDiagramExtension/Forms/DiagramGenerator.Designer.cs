@@ -219,7 +219,7 @@ namespace DatabaseDiagram
             this.dataTypeViewToolStripMenuItem.Name = "dataTypeViewToolStripMenuItem";
             this.dataTypeViewToolStripMenuItem.Size = new System.Drawing.Size(190, 26);
             this.dataTypeViewToolStripMenuItem.Text = "Extended View";
-            this.dataTypeViewToolStripMenuItem.Click += new System.EventHandler(this.dataTypeViewToolStripMenuItem_Click);
+            this.dataTypeViewToolStripMenuItem.Click += new System.EventHandler(this.extendedViewToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 

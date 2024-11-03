@@ -2,7 +2,7 @@
 
 namespace SsmsTableDependencyDiagram.Application.Interfaces
 {
-    public interface IErrorController
+    public interface IErrorService
     {
         void LogAndDisplayErrorMessage(Exception exception);
     }

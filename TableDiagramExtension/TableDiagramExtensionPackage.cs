@@ -45,7 +45,7 @@ namespace TableDiagramExtension
         public const string PackageGuidString = "1bc97246-6e95-4741-88c7-e6b2496e371f";
         internal SharedData _sharedData { get; set; }
         private ILogger _logger;
-        private IErrorController _errorService;
+        private IErrorService _errorService;
 
         #endregion
 
@@ -71,7 +71,7 @@ namespace TableDiagramExtension
             
             ServiceProviderContainer.ConfigureServices(); // Configure DI services
 
-            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
+            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorService>(); // inject error handling service
             _sharedData = new SharedData();
 
             SetObjectExplorerEventProvider(); // register SMO node selection event
@@ -215,7 +215,7 @@ namespace TableDiagramExtension
             // redirect Serilog's static Log class
             Log.Logger = _logger;
 
-            _logger.Information("VSIX Package (TableDiagramExtensionPackage) initialised.");
+            _logger.Information("VSIX Package (SsmsTableDependencyDiagram) initialised.");
         }
     }
 }

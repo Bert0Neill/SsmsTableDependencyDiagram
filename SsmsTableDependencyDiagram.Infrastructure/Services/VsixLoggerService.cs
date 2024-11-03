@@ -8,7 +8,7 @@ namespace SsmsTableDependencyDiagram.Infrastructure.Services
     /// When using /log as a command line argument check the following path
     /// Check file for details: %AppData%\Microsoft\VisualStudio\{Version}\ActivityLog.xml
     /// </summary>
-    public class VsixExtensionLogger
+    public class VsixLoggerService
     {
         public static void LogInformation(string message)
         {

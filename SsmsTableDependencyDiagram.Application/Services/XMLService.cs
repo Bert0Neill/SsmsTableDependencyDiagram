@@ -8,11 +8,11 @@ using System.Xml.Linq;
 
 namespace SsmsTableDependencyDiagram.Application.Services
 {
-    public class XMLController : IXMLController
+    public class XMLService : IXMLService
     {
-        private readonly IErrorController _errorService;
+        private readonly IErrorService _errorService;
 
-        public XMLController(IErrorController errorService) 
+        public XMLService(IErrorService errorService) 
         {
             _errorService = errorService;
         }

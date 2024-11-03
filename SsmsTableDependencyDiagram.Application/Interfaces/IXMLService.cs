@@ -3,7 +3,7 @@ using System.Xml;
 
 namespace SsmsTableDependencyDiagram.Application.Interfaces
 {
-    public interface IXMLController
+    public interface IXMLService
     {        
         string GenerateXmlDocFromDBData(string xmlString);
     }

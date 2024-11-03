@@ -10,12 +10,12 @@ using System.Text;
 
 namespace SsmsTableDependencyDiagram.Infrastructure.Services
 {
-    public class SQLController : ISQLController
+    public class SQLService : ISQLService
     {
-        private readonly IConvertController _convertService;
-        private readonly IErrorController _errorService;
+        private readonly IConvertService _convertService;
+        private readonly IErrorService _errorService;
 
-        public SQLController(IErrorController errorService, IConvertController convertService)
+        public SQLService(IErrorService errorService, IConvertService convertService)
         {
             _errorService = errorService;
             _convertService = convertService;

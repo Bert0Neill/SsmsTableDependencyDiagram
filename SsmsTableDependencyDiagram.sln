@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1) Presentation", "1) Prese
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5) Tests", "5) Tests", "{7A233ACE-DFEA-407C-A38E-9EA2C5B95215}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7) Misc", "7) Misc", "{A53D91F0-F0B4-4A20-9C48-71F9048AA89D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6) Misc", "6) Misc", "{A53D91F0-F0B4-4A20-9C48-71F9048AA89D}"
 	ProjectSection(SolutionItems) = preProject
 		TableDiagramExtension\Misc\AdventureWorksLT2014.bak = TableDiagramExtension\Misc\AdventureWorksLT2014.bak
 		TableDiagramExtension\Misc\SqlWorkbench.Interfaces.dll = TableDiagramExtension\Misc\SqlWorkbench.Interfaces.dll

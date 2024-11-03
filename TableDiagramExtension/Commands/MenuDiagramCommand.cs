@@ -1,19 +1,12 @@
 ﻿using DatabaseDiagram;
-using EnvDTE;
-using EnvDTE80;
-using Microsoft.Extensions.Logging;
-using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using SsmsTableDependencyDiagram.Application.Interfaces;
 using Syncfusion.Licensing;
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TableDiagramExtension.Controllers;
-using static System.Windows.Forms.AxHost;
 using Task = System.Threading.Tasks.Task;
 
 namespace TableDiagramExtension.Commands
@@ -23,6 +16,8 @@ namespace TableDiagramExtension.Commands
     /// </summary>
     internal sealed class MenuDiagramCommand
     {
+        private IErrorService _errorService;
+
         /// <summary>
         /// Command ID.
         /// </summary>
@@ -52,6 +47,9 @@ namespace TableDiagramExtension.Commands
             var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new MenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(menuItem);
+
+            // inject error service
+            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorService>();
         }
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace TableDiagramExtension.Commands
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new MenuDiagramCommand(package, commandService);
+            Instance = new MenuDiagramCommand(package, commandService);            
         }
 
         /// <summary>
@@ -98,7 +96,7 @@ namespace TableDiagramExtension.Commands
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _errorService.LogAndDisplayErrorMessage(ex);                
             }
         }
     }

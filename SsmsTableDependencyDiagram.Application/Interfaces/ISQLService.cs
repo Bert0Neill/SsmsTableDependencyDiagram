@@ -4,7 +4,7 @@ using System.Data;
 
 namespace SsmsTableDependencyDiagram.Application.Interfaces
 {
-    public interface ISQLController
+    public interface ISQLService
     {
         List<DatabaseMetaData> RetrieveDatabaseMetaData(string initialConnectionString, string activeDatabase);
         List<string> RetrieveDatabases(string initialConnectionString);

@@ -85,9 +85,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ErrorController.cs" />
-    <Compile Include="Services\SQLController.cs" />
-    <Compile Include="Services\VsixExtensionLogger.cs" />
+    <Compile Include="Services\ErrorService.cs" />
+    <Compile Include="Services\SQLService.cs" />
+    <Compile Include="Services\VsixLoggerService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SsmsTableDependencyDiagram.Application\SsmsTableDependencyDiagram.Application.csproj">

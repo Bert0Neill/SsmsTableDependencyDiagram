@@ -7,11 +7,11 @@ using System.Reflection;
 
 namespace SsmsTableDependencyDiagram.Application.Services
 {
-    public class ConvertController : IConvertController
+    public class ConvertService : IConvertService
     {
-        private readonly IErrorController _errorService;
+        private readonly IErrorService _errorService;
 
-        public ConvertController(IErrorController errorService)
+        public ConvertService(IErrorService errorService)
         {
             _errorService = errorService;
         }
