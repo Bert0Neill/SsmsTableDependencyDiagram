@@ -5,6 +5,8 @@
 #endregion
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using SsmsTableDependencyDiagram.Domain.Models;
+using SsmsTableDependencyDiagram.Domain.Resources;
 using Syncfusion.Windows.Forms.Diagram;
 using System;
 using System.Collections;
@@ -17,13 +19,9 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using TableDiagramExtension.Classes;
 using TableDiagramExtension.Controllers;
 using TableDiagramExtension.Interfaces;
-using TableDiagramExtension.Models;
-using TableDiagramExtension.Resources;
-using static System.Windows.Forms.LinkLabel;
-using static TableDiagramExtension.Models.CustomDiagramTable;
+using static SsmsTableDependencyDiagram.Domain.Models.CustomDiagramTable;
 
 namespace DatabaseDiagram
 {

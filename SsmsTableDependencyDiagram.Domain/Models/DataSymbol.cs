@@ -5,6 +5,7 @@
 // bertoneill@yahoo.com. Any infringement will be prosecuted under
 // applicable laws. 
 #endregion
+using SsmsTableDependencyDiagram.Domain.Resources;
 using Syncfusion.Windows.Forms.Diagram;
 using System;
 using System.Collections;
@@ -12,8 +13,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using TableDiagramExtension.Resources;
-using static TableDiagramExtension.Models.CustomDiagramTable;
+using static SsmsTableDependencyDiagram.Domain.Models.CustomDiagramTable;
 
 namespace SsmsTableDependencyDiagram.Domain.Models
 {

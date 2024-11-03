@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using SsmsTableDependencyDiagram.Domain.Models;
+using System.Collections.Generic;
 using System.Data;
-using TableDiagramExtension.Models;
 
 namespace TableDiagramExtension.Controllers
 {

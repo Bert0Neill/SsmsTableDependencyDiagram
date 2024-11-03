@@ -1,8 +1,7 @@
 ﻿using Serilog;
 using System;
 using System.Windows.Forms;
-using TableDiagramExtension.Interfaces;
-using TableDiagramExtension.Resources;
+using SsmsTableDependencyDiagram.Domain.Resources;
 
 namespace TableDiagramExtension.Controllers
 {

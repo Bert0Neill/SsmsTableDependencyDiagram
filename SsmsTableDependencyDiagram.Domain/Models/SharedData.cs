@@ -1,9 +1,8 @@
 ﻿using Microsoft.SqlServer.Management.Common;
-using TableDiagramExtension.Interfaces;
 
-namespace SsmsTableDependencyDiagram.Domain.Classes
+namespace SsmsTableDependencyDiagram.Domain.Models
 {
-    public class SharedData : ISharedData
+    public class SharedData
     {
         public string SelectedServerName { get; set; }
         public bool IsTable { get; set; }

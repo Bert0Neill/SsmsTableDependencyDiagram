@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using TableDiagramExtension.Classes;
 using TableDiagramExtension.Interfaces;
 
 namespace TableDiagramExtension.Controllers

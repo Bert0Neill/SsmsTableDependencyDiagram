@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using SsmsTableDependencyDiagram.Domain.Resources;
 using System;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using TableDiagramExtension.Interfaces;
-using TableDiagramExtension.Resources;
 
 namespace TableDiagramExtension.Controllers
 {

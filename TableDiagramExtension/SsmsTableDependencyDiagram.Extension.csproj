@@ -71,11 +71,6 @@
     <Compile Include="Forms\DiagramGenerator.Designer.cs">
       <DependentUpon>DiagramGenerator.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\ForeignKeyInfo.cs" />
-    <Compile Include="Models\DatabaseMetaData.cs" />
-    <Compile Include="Models\DataSymbol.cs" />
-    <Compile Include="Models\CustomDiagramTable.cs" />
-    <Compile Include="Models\SharedData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -86,16 +81,6 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Resources\SqlStatements.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SqlStatements.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Resources\TextStrings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TextStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="TableDiagramExtensionPackage.cs" />
   </ItemGroup>
@@ -190,29 +175,12 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Image\DBPrimaryKey.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Image\ForeignKey.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Image\SSMSTableDependencyDiagramLogo.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Image\TableDependencyDiagram.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Commands\Resources\Diagram.png" />
     <Content Include="Commands\Resources\MenuDiagramCommand.png" />
     <Content Include="database_storage_server_network_file_icon_190636.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <None Include="Resources\Resource_ForeignKey.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\DiagramGenerator.resx">
@@ -223,20 +191,15 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\SqlStatements.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SqlStatements.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\TextStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>TextStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SsmsTableDependencyDiagram.Application\SsmsTableDependencyDiagram.Application.csproj">
       <Project>{322ece1f-ced6-4733-9cac-b216ecc1e421}</Project>
       <Name>SsmsTableDependencyDiagram.Application</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SsmsTableDependencyDiagram.Domain\SsmsTableDependencyDiagram.Domain.csproj">
+      <Project>{DB76A4C5-D5CA-49F4-B75E-7BA721E09C5A}</Project>
+      <Name>SsmsTableDependencyDiagram.Domain</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
