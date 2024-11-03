@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SsmsTableDependencyDiagram.Infrastructure
+namespace SsmsTableDependencyDiagram.Infrastructure.Services
 {
-    public class Class1
+    internal class ConvertorService
     {
     }
 }
