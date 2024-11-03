@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TableDiagramExtension.Classes;
 using TableDiagramExtension.Interfaces;
 
 namespace TableDiagramExtension.Controllers
@@ -22,6 +18,8 @@ namespace TableDiagramExtension.Controllers
             serviceCollection.AddSingleton<ISQLController, SQLController>();
             serviceCollection.AddSingleton<IErrorController, ErrorController>();
             serviceCollection.AddSingleton<IXMLController, XMLController>();
+            serviceCollection.AddSingleton<ISharedData, SharedData>();
+            
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
         }

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SsmsTableDependencyDiagram.Infrastructure.Services
+namespace SsmsTableDependencyDiagram.Application.Services
 {
-    public class ConvertorService
+    public class DiagramGeneratorService
     {
-        public ConvertorService()
+        public DiagramGeneratorService()
         {
-                
+            
         }
     }
 }

@@ -10,8 +10,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using TableDiagramExtension.Classes;
 using TableDiagramExtension.Controllers;
+using TableDiagramExtension.Interfaces;
 using Task = System.Threading.Tasks.Task;
 
 
@@ -42,7 +42,7 @@ namespace TableDiagramExtension
     {
         #region Class Variables
         public const string PackageGuidString = "1bc97246-6e95-4741-88c7-e6b2496e371f";
-        internal SharedData _sharedData { get; set; }
+        internal ISharedData _sharedData { get; set; }
         private ILogger _logger;
         private IErrorController _errorService;
 
@@ -69,8 +69,10 @@ namespace TableDiagramExtension
             };
             
             ServiceProviderContainer.ConfigureServices(); // Configure DI services
+
             _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
-            _sharedData = new SharedData(); // instantiate shared data between forms
+            _sharedData = ServiceProviderContainer.ServiceProvider.GetService<ISharedData>(); // inject shared data model
+
             SetObjectExplorerEventProvider(); // register SMO node selection event
             RetrieveSelectedExplorerNode(); // determine the server\database selected (use it's connection string)
 

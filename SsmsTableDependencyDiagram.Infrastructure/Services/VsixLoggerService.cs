@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace SsmsTableDependencyDiagram.Infrastructure.Services
 {
-    internal class VsixLoggerService
+    public class VsixLoggerService
     {
+        public VsixLoggerService()
+        {
+            
+        }
     }
 }

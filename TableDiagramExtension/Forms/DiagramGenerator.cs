@@ -30,41 +30,22 @@ namespace DatabaseDiagram
     public partial class DiagramGenerator : Form
     {
         #region Members
-        SharedData _sharedData = null;
+        private bool IsCompact;
+        ISharedData _sharedData = null;
         public string fileName;
         private Node prevbNode = null;
         private OpenFileDialog fileDialog = new OpenFileDialog();
+        private DatabaseMetaData selectedTable = null;
 
         private readonly ISQLController _sqlService;
         private readonly IErrorController _errorService;
         private readonly IXMLController _xmlService;
-        private DatabaseMetaData selectedTable = null;
-        private bool IsCompact;
-
         #endregion
 
         #region Form initialize
-        public DiagramGenerator()
-        {
-            _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
-            _sqlService = ServiceProviderContainer.ServiceProvider.GetService<ISQLController>(); // inject database handling service
-            _xmlService = ServiceProviderContainer.ServiceProvider.GetService<IXMLController>(); // inject XML handling service
+        public DiagramGenerator() { }
 
-            InitializeComponent();
-            sqlDependencyDiagram.BeginUpdate();
-            this.sqlDependencyDiagram.Model.BoundaryConstraintsEnabled = false;
-            this.sqlDependencyDiagram.Model.LineStyle.LineColor = Color.LightGray;
-            this.sqlDependencyDiagram.Model.RenderingStyle.SmoothingMode = SmoothingMode.HighQuality;
-            InitailizeDiagram();
-            DiagramAppearance();
-            sqlDependencyDiagram.EndUpdate();
-
-            sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
-
-            Log.Information("Initialised DiagramGenerator ctor");
-        }
-
-        public DiagramGenerator(SharedData sharedData)
+        public DiagramGenerator(ISharedData sharedData)
         {
             try
             {

@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace SsmsTableDependencyDiagram.Infrastructure.Services
 {
-    internal class XmlService
+    public class XmlService
     {
+        public XmlService()
+        {
+                
+        }
     }
 }
