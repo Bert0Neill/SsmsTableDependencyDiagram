@@ -31,8 +31,8 @@ namespace DatabaseDiagram
     {
         #region Members
         private bool IsCompact;
-        ISharedData _sharedData = null;
-        public string fileName;
+        private ISharedData _sharedData = null;
+        //public string fileName;
         private Node prevbNode = null;
         private OpenFileDialog fileDialog = new OpenFileDialog();
         private DatabaseMetaData selectedTable = null;
@@ -49,9 +49,10 @@ namespace DatabaseDiagram
         {
             try
             {
-                _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>(); // inject error handling service
-                _sqlService = ServiceProviderContainer.ServiceProvider.GetService<ISQLController>(); // inject database handling service
-                _xmlService = ServiceProviderContainer.ServiceProvider.GetService<IXMLController>(); // inject XML handling service
+                // dependency inject classes
+                _errorService = ServiceProviderContainer.ServiceProvider.GetService<IErrorController>();
+                _sqlService = ServiceProviderContainer.ServiceProvider.GetService<ISQLController>();
+                _xmlService = ServiceProviderContainer.ServiceProvider.GetService<IXMLController>();
 
                 InitializeComponent();
                 sqlDependencyDiagram.BeginUpdate();
@@ -598,11 +599,6 @@ namespace DatabaseDiagram
                         case 1:
                             sqlDependencyDiagram.SaveBinary(saveFileDialog1.FileName);
                             break;
-                        //case 2:
-
-                        //    //sqlDependencyDiagram.SaveSoap(saveFileDialog1.FileName);
-
-                        //    break;
                         default:
                             sqlDependencyDiagram.SaveBinary(saveFileDialog1.FileName);
                             break;
