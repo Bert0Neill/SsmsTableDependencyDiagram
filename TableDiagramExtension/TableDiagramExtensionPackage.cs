@@ -2,6 +2,7 @@
 using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
 using Microsoft.VisualStudio.Shell;
 using Serilog;
+using SsmsTableDependencyDiagram.Application.Interfaces;
 using SsmsTableDependencyDiagram.Domain.Models;
 using System;
 using System.ComponentModel;
@@ -12,7 +13,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using TableDiagramExtension.Controllers;
-using TableDiagramExtension.Interfaces;
 using Task = System.Threading.Tasks.Task;
 
 

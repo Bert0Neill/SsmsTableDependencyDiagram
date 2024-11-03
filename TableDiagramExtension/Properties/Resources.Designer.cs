@@ -59,45 +59,5 @@ namespace TableDiagramExtension.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap DBPrimaryKey {
-            get {
-                object obj = ResourceManager.GetObject("DBPrimaryKey", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ForeignKey {
-            get {
-                object obj = ResourceManager.GetObject("ForeignKey", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap SSMSTableDependencyDiagramLogo {
-            get {
-                object obj = ResourceManager.GetObject("SSMSTableDependencyDiagramLogo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        public static System.Drawing.Icon TableDependencyDiagram {
-            get {
-                object obj = ResourceManager.GetObject("TableDependencyDiagram", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
     }
 }

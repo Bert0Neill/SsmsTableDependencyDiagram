@@ -5,6 +5,7 @@
 #endregion
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using SsmsTableDependencyDiagram.Application.Interfaces;
 using SsmsTableDependencyDiagram.Domain.Models;
 using SsmsTableDependencyDiagram.Domain.Resources;
 using Syncfusion.Windows.Forms.Diagram;
@@ -20,7 +21,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using TableDiagramExtension.Controllers;
-using TableDiagramExtension.Interfaces;
 using static SsmsTableDependencyDiagram.Domain.Models.CustomDiagramTable;
 
 namespace DatabaseDiagram
@@ -30,7 +30,6 @@ namespace DatabaseDiagram
         #region Members
         private bool IsCompact;
         private SharedData _sharedData = null;
-        //public string fileName;
         private Node prevbNode = null;
         private OpenFileDialog fileDialog = new OpenFileDialog();
         private DatabaseMetaData selectedTable = null;

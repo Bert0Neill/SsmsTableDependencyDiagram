@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using TableDiagramExtension.Interfaces;
+using SsmsTableDependencyDiagram.Application.Interfaces;
 
 namespace TableDiagramExtension.Controllers
 {

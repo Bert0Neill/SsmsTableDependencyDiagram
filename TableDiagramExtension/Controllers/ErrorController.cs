@@ -2,6 +2,7 @@
 using System;
 using System.Windows.Forms;
 using SsmsTableDependencyDiagram.Domain.Resources;
+using SsmsTableDependencyDiagram.Application.Interfaces;
 
 namespace TableDiagramExtension.Controllers
 {

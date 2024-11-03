@@ -44,6 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\ICommand.cs" />
+    <Compile Include="Interfaces\IConvertController.cs" />
+    <Compile Include="Interfaces\IErrorController.cs" />
+    <Compile Include="Interfaces\ISQLController.cs" />
+    <Compile Include="Interfaces\IXMLController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -66,18 +70,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DBPrimaryKey.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ForeignKey.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SSMSTableDependencyDiagramLogo.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\TableDependencyDiagram.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
