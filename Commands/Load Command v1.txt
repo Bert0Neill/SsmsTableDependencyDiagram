@@ -1,0 +1,156 @@
+Convert DiagramGenerator_Load Event to Command
+-----------------------------
+
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Windows.Forms;
+
+public partial class DiagramGenerator : Form
+{
+    private readonly IServiceProvider _serviceProvider;
+    private LoadDiagramCommand _loadDiagramCommand;
+
+    public DiagramGenerator(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+
+        this.Load += DiagramGenerator_Load;
+    }
+
+    private void DiagramGenerator_Load(object sender, EventArgs e)
+    {
+        // Resolve the required services and create the command
+        var sqlService = _serviceProvider.GetRequiredService<ISqlService>();
+        var errorService = _serviceProvider.GetRequiredService<IErrorService>();
+        var sharedData = _serviceProvider.GetRequiredService<SharedData>();
+
+        // Instantiate the command with resolved services
+        _loadDiagramCommand = new LoadDiagramCommand(
+            sqlService, 
+            errorService, 
+            sharedData.SqlOlapConnectionInfoBase.ConnectionString, 
+            cboDatabase.ComboBox, 
+            cboTable.ComboBox
+        );
+
+        // Execute the command
+        _loadDiagramCommand.Execute();
+    }
+}
+
+
+Update ServiceProviderContainer class
+----------------------------
+var services = new ServiceCollection();
+services.AddTransient<ISqlService, SqlService>();
+services.AddTransient<IErrorService, ErrorService>();
+
+// *** think about adding this in???
+services.AddSingleton<SharedData>();
+
+// *** alternative ***
+services.AddTransient<LoadDiagramCommand>(sp => new LoadDiagramCommand(
+    sp.GetRequiredService<ISqlService>(),
+    sp.GetRequiredService<IErrorService>(),
+    sp.GetRequiredService<SharedData>().SqlOlapConnectionInfoBase.ConnectionString
+));
+
+
+
+// Build the service provider
+var serviceProvider = services.BuildServiceProvider();
+
+
+Command
+--------
+using System;
+using System.Collections.Generic;
+
+namespace MyApp.Commands
+{
+    public class LoadDiagramCommand : Command
+    {
+        private readonly ISqlService _sqlService;
+        private readonly IErrorService _errorService;
+        private readonly string _connectionString;
+
+        // Properties to hold dropdown data
+        public List<string> Databases { get; private set; }
+        public bool IsDatabaseEnabled { get; private set; }
+
+        public LoadDiagramCommand(ISqlService sqlService, IErrorService errorService, string connectionString)
+        {
+            _sqlService = sqlService;
+            _errorService = errorService;
+            _connectionString = connectionString;
+        }
+
+        public override void Execute()
+        {
+            try
+            {
+                // Retrieve database names
+                Databases = _sqlService.RetrieveDatabases(_connectionString) ?? new List<string>();
+                Databases.Insert(0, TextStrings.PleaseSelectDatabase);
+
+                // Enable the database selection if databases are available
+                IsDatabaseEnabled = Databases.Count > 1;
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+                IsDatabaseEnabled = false;
+            }
+        }
+    }
+}
+
+
+Updated Winform Event
+---------------------
+using Microsoft.Extensions.DependencyInjection;
+using MyApp.Commands;
+using System;
+using System.Windows.Forms;
+
+public partial class DiagramGenerator : Form
+{
+    private readonly IServiceProvider _serviceProvider;
+    private LoadDiagramCommand _loadDiagramCommand;
+
+    public DiagramGenerator(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+
+        this.Load += DiagramGenerator_Load;
+    }
+
+    private void DiagramGenerator_Load(object sender, EventArgs e)
+    {
+        // Resolve services and create the command
+        var sqlService = _serviceProvider.GetRequiredService<ISqlService>();
+        var errorService = _serviceProvider.GetRequiredService<IErrorService>();
+        var sharedData = _serviceProvider.GetRequiredService<SharedData>();
+
+		// *** alternative ***
+		var command = _serviceProvider.GetRequiredService<LoadDiagramCommand>();
+		command.Execute();
+
+		// to this
+        _loadDiagramCommand = new LoadDiagramCommand(
+            sqlService, 
+            errorService, 
+            sharedData.SqlOlapConnectionInfoBase.ConnectionString
+        );
+
+        // Execute the command to load the databases
+        _loadDiagramCommand.Execute();
+
+        // Update UI based on command results
+        cboDatabase.ComboBox.DataSource = _loadDiagramCommand.Databases;
+        cboDatabase.Enabled = _loadDiagramCommand.IsDatabaseEnabled;
+        cboTable.Enabled = false;
+    }
+}

@@ -1,0 +1,103 @@
+cboDatabase_SelectedIndexChanged
+-------------------------------
+
+Command
+-------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace MyApp.Commands
+{
+    public class DatabaseSelectionCommand : Command
+    {
+        private readonly ComboBox cboDatabase;
+        private readonly ComboBox cboTable;
+        private readonly ISqlService _sqlService;
+        private readonly IErrorService _errorService;
+        private readonly SharedData _sharedData;
+
+        public DatabaseSelectionCommand(
+            ComboBox cboDatabase,
+            ComboBox cboTable,
+            ISqlService sqlService,
+            IErrorService errorService,
+            SharedData sharedData)
+        {
+            this.cboDatabase = cboDatabase;
+            this.cboTable = cboTable;
+            _sqlService = sqlService;
+            _errorService = errorService;
+            _sharedData = sharedData;
+        }
+
+        public override void Execute()
+        {
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+                // Reset the table dropdown
+                cboTable.Enabled = false;
+
+                string selectedDatabase = cboDatabase.SelectedValue?.ToString();
+                if (string.IsNullOrEmpty(selectedDatabase) || selectedDatabase == TextStrings.PleaseSelectDatabase)
+                    return;
+
+                // Retrieve metadata for the selected database
+                List<DatabaseMetaData> initialData = _sqlService.RetrieveDatabaseMetaData(_sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase);
+                initialData.Insert(0, new DatabaseMetaData { TABLE_NAME = TextStrings.PleaseSelectTable });
+
+                if (initialData.Count > 1)
+                {
+                    var distinctTables = initialData.GroupBy(p => p.TABLE_NAME).Select(g => g.First()).ToList();
+
+                    cboTable.DataSource = null;
+                    cboTable.DataSource = distinctTables;
+                    cboTable.DisplayMember = nameof(DatabaseMetaData.TABLE_NAME);
+                    cboTable.Enabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+    }
+}
+
+
+Winform
+------
+public partial class MyForm : Form
+{
+    private readonly DatabaseSelectionCommand _databaseSelectionCommand;
+
+    public MyForm(ISqlService sqlService, IErrorService errorService, SharedData sharedData)
+    {
+        InitializeComponent();
+
+        // Instantiate the command and pass required dependencies
+        _databaseSelectionCommand = new DatabaseSelectionCommand(
+            cboDatabase.ComboBox,
+            cboTable.ComboBox,
+            sqlService,
+            errorService,
+            sharedData
+        );
+
+        // *** Hook up the event handler
+        cboDatabase.SelectedIndexChanged += cboDatabase_SelectedIndexChanged;
+    }
+
+    private void cboDatabase_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        // *** Execute the command
+        _databaseSelectionCommand.Execute();
+    }
+}

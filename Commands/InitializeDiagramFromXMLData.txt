@@ -1,0 +1,167 @@
+InitializeDiagramFromXMLData
+--------------------------
+
+command
+---------
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.Windows.Forms;
+using Syncfusion.Windows.Forms.Diagram;
+using MyApp.Services;
+
+namespace MyApp.Commands
+{
+    public class InitializeDiagramCommand : Command
+    {
+        private readonly Diagram sqlDependencyDiagram;
+        private readonly IErrorService errorService;
+        private readonly IXmlService xmlService;
+        private readonly string updatedXml;
+        private readonly DataTable relationships;
+        private readonly List<string> dependencyTables;
+        private readonly bool isCompact;
+
+        public InitializeDiagramCommand(
+            Diagram sqlDependencyDiagram,
+            IErrorService errorService,
+            IXmlService xmlService,
+            string updatedXml,
+            DataTable relationships,
+            List<string> dependencyTables,
+            bool isCompact)
+        {
+            this.sqlDependencyDiagram = sqlDependencyDiagram;
+            this.errorService = errorService;
+            this.xmlService = xmlService;
+            this.updatedXml = updatedXml;
+            this.relationships = relationships;
+            this.dependencyTables = dependencyTables;
+            this.isCompact = isCompact;
+        }
+
+        public override void Execute()
+        {
+            try
+            {
+                sqlDependencyDiagram.Model.Clear();
+                sqlDependencyDiagram.Model.BeginUpdate();
+
+                CreateLegend();
+                CreateConnectors();
+                CreateDiagramNodesFromXml();
+
+                sqlDependencyDiagram.Model.EndUpdate();
+                sqlDependencyDiagram.View.SelectionList.Clear();
+            }
+            catch (Exception ex)
+            {
+                errorService.LogAndDisplayErrorMessage(ex);
+            }
+        }
+
+        private void CreateLegend()
+        {
+            RoundRect rrect = new RoundRect(10, 10, 250, 100, MeasureUnits.Pixel);
+            rrect.TreatAsObstacle = true;
+            rrect.FillStyle.Color = Color.Transparent;
+            rrect.EditStyle.AllowSelect = false;
+            rrect.LineStyle.LineColor = Color.Gray;
+
+            rrect.Labels.Add(CreateLabel(rrect, "Table Relationship Legend", 0, 0, true, true));
+            rrect.Labels.Add(CreateLabel(rrect, ": One To One", 100, 10));
+            rrect.Labels.Add(CreateLabel(rrect, ": One To Many", 100, 40));
+            rrect.Labels.Add(CreateLabel(rrect, ": Many To Many", 100, 70));
+
+            sqlDependencyDiagram.Model.AppendChild(rrect);
+        }
+
+        private Syncfusion.Windows.Forms.Diagram.Label CreateLabel(
+            RoundRect parent, string text, float offsetX, float offsetY, bool bold = false, bool underline = false)
+        {
+            var label = new Syncfusion.Windows.Forms.Diagram.Label(parent, text);
+            label.FontStyle.Family = "Segoe UI";
+            label.FontStyle.Size = 9;
+            label.FontStyle.Bold = bold;
+            label.FontStyle.Underline = underline;
+            label.OffsetX = offsetX;
+            label.OffsetY = offsetY;
+            return label;
+        }
+
+        private void CreateConnectors()
+        {
+            sqlDependencyDiagram.Model.AppendChild(CreateConnector(new PointF(20, 30), new PointF(110, 30)));
+            sqlDependencyDiagram.Model.AppendChild(CreateConnector(new PointF(20, 60), new PointF(110, 60), DecoratorShape.ReverseArrow));
+            sqlDependencyDiagram.Model.AppendChild(CreateConnector(new PointF(20, 90), new PointF(110, 90), DecoratorShape.ReverseArrow, DecoratorShape.ReverseArrow));
+        }
+
+        private LineConnector CreateConnector(PointF start, PointF end, 
+            DecoratorShape headDecorator = DecoratorShape.None, DecoratorShape tailDecorator = DecoratorShape.None)
+        {
+            var connector = new LineConnector(start, end);
+            connector.EditStyle.AllowSelect = false;
+            connector.HeadDecorator.DecoratorShape = headDecorator;
+            connector.TailDecorator.DecoratorShape = tailDecorator;
+            return connector;
+        }
+
+        private void CreateDiagramNodesFromXml()
+        {
+            ArrayList sortedList = new ArrayList(xmlService.ReadTableDataFromXMLFile(updatedXml).Values);
+            CreateOrgDiagramFromList(sortedList, isCompact);
+            sortedList.Clear();
+            ConnectNodes(relationships, dependencyTables);
+        }
+
+        private void CreateOrgDiagramFromList(ArrayList sortedList, bool isCompact)
+        {
+            // Logic for creating nodes based on the compact or extended view.
+            // ...
+        }
+
+        private void ConnectNodes(DataTable relationships, List<string> dependencyTables)
+        {
+            // Logic for connecting nodes based on relationships.
+            // ...
+        }
+    }
+}
+
+
+Winform
+------
+public partial class MyForm : Form
+{
+    private readonly IErrorService _errorService;
+    private readonly IXmlService _xmlService;
+    private readonly Diagram _sqlDependencyDiagram;
+    private readonly string _connectionString;
+
+    public MyForm(IErrorService errorService, IXmlService xmlService, string connectionString, Diagram sqlDependencyDiagram)
+    {
+        InitializeComponent();
+        _errorService = errorService;
+        _xmlService = xmlService;
+        _connectionString = connectionString;
+        _sqlDependencyDiagram = sqlDependencyDiagram;
+    }
+
+    private void InitializeDiagram(string updatedXml, DataTable relationships, List<string> dependencyTables, bool isCompact)
+    {
+        var initializeDiagramCommand = new InitializeDiagramCommand(
+            _sqlDependencyDiagram,
+            _errorService,
+            _xmlService,
+            updatedXml,
+            relationships,
+            dependencyTables,
+            isCompact
+        );
+
+        initializeDiagramCommand.Execute();
+    }
+}

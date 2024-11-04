@@ -1,0 +1,76 @@
+cboTable_SelectedIndexChanged
+------------------------------
+
+Command
+--------
+using System;
+using System.Windows.Forms;
+
+namespace MyApp.Commands
+{
+    public class TableSelectionCommand : Command
+    {
+        private readonly ComboBox cboTable;
+        private readonly ToolStripSplitButton viewSplitButton;
+        private readonly IErrorService _errorService;
+
+        public TableSelectionCommand(ComboBox cboTable, ToolStripSplitButton viewSplitButton, IErrorService errorService)
+        {
+            this.cboTable = cboTable;
+            this.viewSplitButton = viewSplitButton;
+            _errorService = errorService;
+        }
+
+        public override void Execute()
+        {
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+                viewSplitButton.Enabled = false;
+
+                // Get selected table metadata
+                var selectedTable = cboTable.SelectedItem as DatabaseMetaData;
+                if (selectedTable == null || selectedTable.TABLE_NAME == TextStrings.PleaseSelectTable)
+                    return;
+
+                viewSplitButton.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+    }
+}
+
+Winform
+----------
+public partial class MyForm : Form
+{
+    private readonly TableSelectionCommand _tableSelectionCommand;
+
+    public MyForm(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+
+        // Resolve dependencies and initialize the command
+        var errorService = serviceProvider.GetRequiredService<IErrorService>();
+		
+		//****
+        _tableSelectionCommand = new TableSelectionCommand(cboTable.ComboBox, viewSplitToolStripSplitButton, errorService);
+
+        // Assign the event handler to call the command
+        cboTable.SelectedIndexChanged += cboTable_SelectedIndexChanged;
+    }
+
+    private void cboTable_SelectedIndexChanged(object sender, EventArgs e)
+    {
+		//****
+        _tableSelectionCommand.Execute();
+    }
+}
