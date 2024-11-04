@@ -119,7 +119,10 @@ namespace TableDiagramExtension
         {
             return this.GetService(typeof(IObjectExplorerService)) as IObjectExplorerService;
         }
-
+        /// <summary>
+        /// Dynamically setting up an event handler for the CurrentContextChanged event within SQL Server Management Studio's Object Explorer
+        /// </summary>
+        /// <exception cref="System.NullReferenceException">Can't find ObjectExplorer ContextService.</exception>
         public void SetObjectExplorerEventProvider()
         {
             try
@@ -162,6 +165,13 @@ namespace TableDiagramExtension
             }
         }
 
+        /// <summary>
+        /// Processes a change event in a SQL Server Management Studio (SSMS) Object Explorer node, 
+        /// where it retrieves details about the node that changed, 
+        /// logs information for debugging, and updates a _sharedData object with relevant properties based on the selected node's characteristics
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="args">The <see cref="NodesChangedEventArgs"/> instance containing the event data.</param>
         private void Provider_SelectionChanged(object sender, NodesChangedEventArgs args)
         {
             try
@@ -169,12 +179,12 @@ namespace TableDiagramExtension
                 if (args.ChangedNodes.Count <= 0) return;
                 var node = args.ChangedNodes[0];
                 if (node == null) return;
-
+#if DEBUG
                 Debug.WriteLine(node.UrnPath); // type of object (DB or table)
                 Debug.WriteLine(node.InvariantName); // table name
                 Debug.WriteLine(node.Context);
                 Debug.WriteLine(node.Connection.ServerName);
-
+#endif
                 _sharedData.IsTable = node.UrnPath.EndsWith("Table");
                 _sharedData.DatabaseOrTableName = node.InvariantName;
                 _sharedData.SelectedServerName = node.Connection.ServerName;
@@ -182,8 +192,7 @@ namespace TableDiagramExtension
             }
             catch (Exception ex)
             {
-                Log.Error(ex.StackTrace);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
 
