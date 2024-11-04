@@ -1,0 +1,100 @@
+Command
+--------
+using System;
+
+namespace MyApp.Commands
+{
+    public interface ICommand
+    {
+        bool CanExecute();
+        void Execute();
+        event EventHandler CanExecuteChanged;
+    }
+}
+
+
+Abstract Class
+--------------
+ public abstract class Command : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public virtual bool CanExecute() => true;
+
+        public abstract void Execute();
+
+        protected void OnCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+Your Command
+------------
+using System.Windows.Forms;
+
+namespace MyApp.Commands
+{
+    public class NoParameterCommand : Command
+    {
+        public override bool CanExecute(string parameter)
+        {
+            // Allow execution only if the parameter is not null or empty
+            return !string.IsNullOrEmpty(parameter);
+        }
+
+        public override void Execute()
+        {
+            // Action for when the command is executed
+            MessageBox.Show("Command executed with no parameters.");
+        }
+
+        public override void Execute(string parameter)
+        {
+            // Display the parameter in a message box
+            MessageBox.Show($"Button clicked with parameter: {parameter}");
+        }
+    }
+}
+
+
+Add your command to DI
+-----------------------
+services.AddTransient<ICommand, NoParameterCommand>();
+
+
+Command in WinForm
+------------------
+public partial class MainForm : Form
+{
+    private readonly ICommand<string> _myButtonClickCommand;
+
+    public MainForm(ICommand<string> myButtonClickCommand)
+    {
+        InitializeComponent();
+        _myButtonClickCommand = myButtonClickCommand;
+
+        // Initial check to enable/disable the button
+        myButton.Enabled = _myButtonClickCommand.CanExecute("InitialParameter");
+    }
+
+    private void myButton_Click(object sender, EventArgs e)
+    {
+        string parameter = textBoxInput.Text; // Assume a TextBox for input
+
+        if (_myButtonClickCommand.CanExecute(parameter))
+        {
+            _myButtonClickCommand.Execute(parameter);
+        }
+        else
+        {
+            MessageBox.Show("Command cannot execute with the provided input.");
+        }
+    }
+
+    private void textBoxInput_TextChanged(object sender, EventArgs e)
+    {
+        // Enable or disable the button dynamically based on CanExecute
+        myButton.Enabled = _myButtonClickCommand.CanExecute(textBoxInput.Text);
+    }
+}
