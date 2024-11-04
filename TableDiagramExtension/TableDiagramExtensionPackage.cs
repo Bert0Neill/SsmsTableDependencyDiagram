@@ -119,6 +119,7 @@ namespace TableDiagramExtension
         {
             return this.GetService(typeof(IObjectExplorerService)) as IObjectExplorerService;
         }
+
         /// <summary>
         /// Dynamically setting up an event handler for the CurrentContextChanged event within SQL Server Management Studio's Object Explorer
         /// </summary>
@@ -130,16 +131,24 @@ namespace TableDiagramExtension
                 var mi = GetType().GetMethod("Provider_SelectionChanged", BindingFlags.NonPublic | BindingFlags.Instance);
                 var objectExplorer = GetObjectExplorer();
                 if (objectExplorer == null) return;
-                var t = Assembly.Load("Microsoft.SqlServer.Management.SqlStudio.Explorer").GetType("Microsoft.SqlServer.Management.SqlStudio.Explorer.ObjectExplorerService");
 
+                // loads the ObjectExplorerService type from the Microsoft.SqlServer.Management.SqlStudio.Explorer assembly.ObjectExplorerService manages the behaviour of Object Explorer
+                var objectExploerType = Assembly.Load("Microsoft.SqlServer.Management.SqlStudio.Explorer").GetType("Microsoft.SqlServer.Management.SqlStudio.Explorer.ObjectExplorerService");
+
+                // retrieve the selected nodes in Object Explorer
                 objectExplorer.GetSelectedNodes(out int nodeCount, out INodeInformation[] nodes);
 
-                var piContainer = t.GetProperty("Container", BindingFlags.Public | BindingFlags.Instance);
+                // retrieve the Container property from ObjectExplorerService, which holds more components used by Object Explorer
+                var piContainer = objectExploerType.GetProperty("Container", BindingFlags.Public | BindingFlags.Instance);
                 var objectExplorerContainer = piContainer.GetValue(objectExplorer, null);
+
+                // access Components property of Container, a collection of various components
                 var piContextService = objectExplorerContainer.GetType().GetProperty("Components", BindingFlags.Public | BindingFlags.Instance);
                 var objectExplorerComponents = piContextService.GetValue(objectExplorerContainer, null) as ComponentCollection;
+
                 object contextService = null;
 
+                // iterate through components in objectExplorerComponents to find one related to ContextService. If ContextService is not found, it throws an exception
                 if (objectExplorerComponents != null)
                     foreach (Component component in objectExplorerComponents)
                     {
@@ -152,8 +161,11 @@ namespace TableDiagramExtension
                 if (contextService == null)
                     throw new NullReferenceException("Can't find ObjectExplorer ContextService.");
 
+                // retrieves the ObjectExplorerContext property from ContextService, which represents the current context of Object Explorer
                 var piObjectExplorerContext = contextService.GetType().GetProperty("ObjectExplorerContext", BindingFlags.Public | BindingFlags.Instance);
                 var objectExplorerContext = piObjectExplorerContext.GetValue(contextService, null);
+
+                // finds the CurrentContextChanged event on ObjectExplorerContext. If the event is found, it creates a delegate (using Provider_SelectionChanged as the event handler) and attaches it to CurrentContextChanged
                 var ei = objectExplorerContext.GetType().GetEvent("CurrentContextChanged", BindingFlags.Public | BindingFlags.Instance);
                 if (ei == null) return;
                 var del = Delegate.CreateDelegate(ei.EventHandlerType, this, mi);
