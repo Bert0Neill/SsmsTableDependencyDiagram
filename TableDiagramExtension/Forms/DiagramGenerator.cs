@@ -871,8 +871,7 @@ namespace DatabaseDiagram
                 if (initialData.Count > 1)
                 {
                     var distinctTables = initialData.GroupBy(p => p.TABLE_NAME).Select(g => g.First()).ToList();
-
-                    //var comboData = initialData.Select(tbl => tbl.TABLE_NAME).Distinct().ToList();
+                    
                     this.cboTable.ComboBox.DataSource = null;
                     this.cboTable.ComboBox.DataSource = distinctTables;
                     this.cboTable.ComboBox.DisplayMember = TextStrings.TABLE_NAME;
@@ -897,18 +896,7 @@ namespace DatabaseDiagram
         }
 
         private void extendedViewToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //string parameter = textBoxInput.Text; // Assume a TextBox for user input
-
-            //if (_myButtonClickCommand.CanExecute(parameter))
-            //{
-            //    _myButtonClickCommand.Execute(parameter);
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Command cannot execute with the provided input.");
-            //}
-
+        {           
             Cursor.Current = Cursors.WaitCursor;
 
             IsCompact = false;
