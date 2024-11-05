@@ -270,7 +270,7 @@ namespace DatabaseDiagram
             this.pNGToolStripMenuItem.Name = "pNGToolStripMenuItem";
             this.pNGToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
             this.pNGToolStripMenuItem.Text = "PNG";
-            this.pNGToolStripMenuItem.Click += new System.EventHandler(this.pNGToolStripMenuItem_Click);
+            this.pNGToolStripMenuItem.Click += new System.EventHandler(this.pngToolStripMenuItem_Click);
             // 
             // jPEGToolStripMenuItem
             // 

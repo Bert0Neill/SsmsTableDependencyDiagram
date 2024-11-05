@@ -1,0 +1,70 @@
+compactViewToolStripMenuItem_Click
+-------------------------------
+
+Command
+-----------
+using System;
+using System.Windows.Forms;
+
+namespace MyApp.Commands
+{
+    public class CompactViewCommand : Command
+    {
+        private readonly Action<bool> _generateDiagram;
+        private readonly Func<bool> _isCompactSetter;
+
+        public CompactViewCommand(Func<bool> isCompactSetter, Action<bool> generateDiagram)
+        {
+            _isCompactSetter = isCompactSetter;
+            _generateDiagram = generateDiagram;
+        }
+
+        public override void Execute()
+        {
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+                // Set compact view
+                _isCompactSetter.Invoke();
+                
+                // Generate diagram in compact view
+                _generateDiagram(true);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+    }
+}
+
+
+
+Winform
+---------
+public partial class MyForm : Form
+{
+	// ***
+    private readonly CompactViewCommand _compactViewCommand;
+
+    public MyForm()
+    {
+        InitializeComponent();
+
+        // *** Initialize the command with delegates for IsCompact and GenerateDiagram
+        _compactViewCommand = new CompactViewCommand(
+            () => IsCompact = true, 
+            GenerateDiagram
+        );
+
+        // *** Set up the event handler to call the command
+        compactViewToolStripMenuItem.Click += compactViewToolStripMenuItem_Click;
+    }
+
+    private void compactViewToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        // *** Execute the command
+        _compactViewCommand.Execute();
+    }
+}

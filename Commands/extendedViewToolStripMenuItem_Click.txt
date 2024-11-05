@@ -1,0 +1,68 @@
+extendedViewToolStripMenuItem_Click
+
+Command
+--------
+
+using System;
+using System.Windows.Forms;
+
+namespace MyApp.Commands
+{
+    public class ExtendedViewCommand : Command
+    {
+        private readonly Action<bool> _generateDiagram;
+        private readonly Action _setExtendedView;
+
+        public ExtendedViewCommand(Action setExtendedView, Action<bool> generateDiagram)
+        {
+            _setExtendedView = setExtendedView;
+            _generateDiagram = generateDiagram;
+        }
+
+        public override void Execute()
+        {
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+                // Set extended view
+                _setExtendedView();
+
+                // Generate diagram in extended view
+                _generateDiagram(false);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+    }
+}
+
+
+Winform
+--------
+public partial class MyForm : Form
+{
+    private readonly ExtendedViewCommand _extendedViewCommand;
+
+    public MyForm()
+    {
+        InitializeComponent();
+
+        // Initialize the command with delegates for setting IsCompact and GenerateDiagram
+        _extendedViewCommand = new ExtendedViewCommand(
+            () => IsCompact = false,
+            GenerateDiagram
+        );
+
+        // Set up the event handler to call the command
+        extendedViewToolStripMenuItem.Click += extendedViewToolStripMenuItem_Click;
+    }
+
+    private void extendedViewToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        // Execute the command
+        _extendedViewCommand.Execute();
+    }
+}

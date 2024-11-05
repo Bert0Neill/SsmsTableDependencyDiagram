@@ -25,9 +25,6 @@ namespace TableDiagramExtension.Controllers
             serviceCollection.AddSingleton<IErrorService, ErrorService>();
             serviceCollection.AddSingleton<IXMLService, XMLService>();
 
-            // Register Commands
-            serviceCollection.AddTransient<ICommand<string>, MyButtonClickCommand>();
-
             ServiceProvider = serviceCollection.BuildServiceProvider();
         }
     }

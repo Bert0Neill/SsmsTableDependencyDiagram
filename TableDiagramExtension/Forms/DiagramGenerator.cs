@@ -41,7 +41,8 @@ namespace DatabaseDiagram
         #endregion
 
         #region Commands
-        private readonly ICommand<string> _myButtonClickCommand;
+        private UpdateToolStripButtonsCommand _updateToolStripButtonsCommand;
+        private ExportDiagramAsImageCommand exportDiagramAsImageCommand;
         #endregion
 
         #region Form initialize
@@ -56,10 +57,6 @@ namespace DatabaseDiagram
                 _sqlService = ServiceProviderContainer.ServiceProvider.GetService<ISQLService>();
                 _xmlService = ServiceProviderContainer.ServiceProvider.GetService<IXMLService>();
 
-                //_myButtonClickCommand = myButtonClickCommand;
-                //_myButtonClickCommand.Execute("Hello");
-                //viewSplitToolStripSplitButton.Enabled = _myButtonClickCommand.CanExecute("InitialParameter");
-
                 InitializeComponent();
                 sqlDependencyDiagram.BeginUpdate();
                 this.sqlDependencyDiagram.Model.BoundaryConstraintsEnabled = false;
@@ -71,6 +68,14 @@ namespace DatabaseDiagram
                 sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
                 
                 _sharedData = sharedData;
+
+                // instantiate commands
+                _updateToolStripButtonsCommand = new UpdateToolStripButtonsCommand(
+                      sqlDependencyDiagram,
+                      printToolStripButton,
+                      exportToolStripButton,
+                      saveToolStripButton,
+                      _errorService);
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -574,7 +579,6 @@ namespace DatabaseDiagram
             try
             {
                 this.saveFileDialog1.FileName = "Diagram.edd";
-                //saveFileDialog1.Filter = "EDD file(*.edd)|*.edd";
 
                 saveFileDialog1.Title = TextStrings.SaveFile;
                 saveFileDialog1.Filter = @"EDD file(*.edd)|*.edd|XML file(*.xml)|*.xml|All files|*.*";
@@ -617,22 +621,17 @@ namespace DatabaseDiagram
             }
         }
 
-        private void pNGToolStripMenuItem_Click(object sender, EventArgs e)
+        private void pngToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
-                saveFileDialog1.Filter = @"W3C Portable Network Graphics(*.png)|*.png";
-                saveFileDialog1.Title = "Export Diagram As:";
-                saveFileDialog1.FileName = "Diagram";
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    ImageFormat imgformat = ImageFormat.Png;
-                    SaveImage(saveFileDialog1.FileName, imgformat);
-                }
-                else
-                {
-                    return;
-                }
+                exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
+                    saveFileDialog1,
+                    sqlDependencyDiagram,
+                    _errorService,
+                    ImageFormat.Png);
+
+                exportDiagramAsImageCommand.Execute();              
             }
             catch (Exception ex)
             {
@@ -644,18 +643,13 @@ namespace DatabaseDiagram
         {
             try
             {
-                saveFileDialog1.Filter = @"Joint Photographic Experts Group(*.jpeg)|*.jpeg";
-                saveFileDialog1.Title = "Export Diagram As:";
-                saveFileDialog1.FileName = "Diagram";
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    ImageFormat imgformat = ImageFormat.Jpeg;
-                    SaveImage(saveFileDialog1.FileName, imgformat);
-                }
-                else
-                {
-                    return;
-                }
+                exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
+                    saveFileDialog1,
+                    sqlDependencyDiagram,
+                    _errorService,
+                    ImageFormat.Jpeg);
+
+                exportDiagramAsImageCommand.Execute();
             }
             catch (Exception ex)
             {
@@ -667,19 +661,13 @@ namespace DatabaseDiagram
         {
             try
             {
-                saveFileDialog1.Filter = @"Graphics Interchange Format(*.gif)|*.gif";
-                saveFileDialog1.Title = "Export Diagram As:";
-                saveFileDialog1.FileName = "Diagram";
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    ImageFormat imgformat = ImageFormat.Gif;
-                    SaveImage(saveFileDialog1.FileName, imgformat);
+                exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
+                    saveFileDialog1,
+                    sqlDependencyDiagram,
+                    _errorService,
+                    ImageFormat.Gif);
 
-                }
-                else
-                {
-                    return;
-                }
+                exportDiagramAsImageCommand.Execute();
             }
             catch (Exception ex)
             {
@@ -765,35 +753,12 @@ namespace DatabaseDiagram
         #endregion
 
         #region Helper Methods
-        /// Save diagram as Image
-        /// </summary>
-        /// <param name="filename">Filename </param>
-        /// <param name="imageformat">image format</param>
-        private void SaveImage(string filename, ImageFormat imageformat)
-        {
-            try
-            {
-                Image img = this.sqlDependencyDiagram.View.ExportDiagramAsImage(false);
-                img.Save(filename, imageformat);
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
 
         private void AreToolStripButtonsEnabled()
         {
             try
             {
-                if (this.sqlDependencyDiagram != null && this.sqlDependencyDiagram.Model != null)
-                {
-                    this.printToolStripButton.Enabled = this.exportToolStripButton.Enabled = this.saveToolStripButton.Enabled = true;
-                }
-                else
-                {
-                    this.printToolStripButton.Enabled = this.exportToolStripButton.Enabled = this.saveToolStripButton.Enabled = false;
-                }
+                _updateToolStripButtonsCommand.Execute();
             }
             catch (Exception ex)
             {
@@ -836,14 +801,14 @@ namespace DatabaseDiagram
         {
             try
             {
-                Cursor.Current = Cursors.WaitCursor;
+                Cursor.Current = Cursors.WaitCursor;               
 
                 this.viewSplitToolStripSplitButton.Enabled = false;
                 DatabaseMetaData selectedTable = (DatabaseMetaData)this.cboTable.ComboBox.SelectedValue;
 
                 if (selectedTable.TABLE_NAME == TextStrings.PleaseSelectTable) return;
 
-                this.viewSplitToolStripSplitButton.Enabled = true;
+                this.viewSplitToolStripSplitButton.Enabled = true; // enable user to generate diagram
             }
             catch (Exception ex)
             {
@@ -859,15 +824,24 @@ namespace DatabaseDiagram
                 Cursor.Current = Cursors.WaitCursor;
 
                 List<DatabaseMetaData> initialData;
-                string selectedDatabase = this.cboDatabase.ComboBox.SelectedValue.ToString();
+
+                // disable event as new data will be bound and trigger this event & disable any user interaction until tables retrieved
+                this.cboTable.SelectedIndexChanged -= new System.EventHandler(this.cboTable_SelectedIndexChanged);
                 this.cboTable.Enabled = false;
 
+                // clear any existing diagram
+                sqlDependencyDiagram.BeginUpdate();
+                sqlDependencyDiagram.Model.Clear();
+                sqlDependencyDiagram.View.SelectionList.Clear();
+                sqlDependencyDiagram.EndUpdate();
+
+                AreToolStripButtonsEnabled();
+
+                string selectedDatabase = this.cboDatabase.ComboBox.SelectedValue.ToString();
                 if (selectedDatabase == TextStrings.PleaseSelectDatabase) return;
 
                 initialData = _sqlService.RetrieveDatabaseMetaData(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase);
-
                 initialData.Insert(0, new DatabaseMetaData() { TABLE_NAME = TextStrings.PleaseSelectTable });
-
                 if (initialData.Count > 1)
                 {
                     var distinctTables = initialData.GroupBy(p => p.TABLE_NAME).Select(g => g.First()).ToList();
@@ -882,7 +856,13 @@ namespace DatabaseDiagram
             {
                 _errorService.LogAndDisplayErrorMessage(ex);
             }
-            finally { Cursor.Current = Cursors.Default;}
+            finally 
+            {
+                // enable combo and event
+                this.cboTable.SelectedIndexChanged += new System.EventHandler(this.cboTable_SelectedIndexChanged);
+                this.cboTable.Enabled = true;
+                Cursor.Current = Cursors.Default;
+            }
         }
 
         private void compactViewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -892,11 +872,14 @@ namespace DatabaseDiagram
             IsCompact = true;
             this.GenerateDiagram(true);
 
+            sqlDependencyDiagram.Enabled = true; // disable for toolstrip enablement
+            AreToolStripButtonsEnabled();
+
             Cursor.Current = Cursors.Default;
         }
 
         private void extendedViewToolStripMenuItem_Click(object sender, EventArgs e)
-        {           
+        {
             Cursor.Current = Cursors.WaitCursor;
 
             IsCompact = false;
@@ -930,7 +913,6 @@ namespace DatabaseDiagram
 
                 InitializeDiagramFromXMLData(updatedXml, Relationships, dependencyTables, isCompact);
 
-                // sqlDependencyDiagram.FitDocument(); // need zooming and scrolling for this to work correctly
                 sqlDependencyDiagram.View.SelectionList.Clear();
 
                 // enable buttons

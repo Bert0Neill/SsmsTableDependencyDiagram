@@ -1,0 +1,77 @@
+AreToolStripButtonsEnabled
+--------------------------
+
+Command
+------
+using System;
+using System.Windows.Forms;
+
+namespace MyApp.Commands
+{
+    public class EnableToolStripButtonsCommand : Command
+    {
+        private readonly ToolStripButton _printButton;
+        private readonly ToolStripButton _exportButton;
+        private readonly ToolStripButton _saveButton;
+        private readonly Control _sqlDependencyDiagram;
+        private readonly IErrorService _errorService;
+
+        public EnableToolStripButtonsCommand(
+            ToolStripButton printButton,
+            ToolStripButton exportButton,
+            ToolStripButton saveButton,
+            Control sqlDependencyDiagram,
+            IErrorService errorService)
+        {
+            _printButton = printButton;
+            _exportButton = exportButton;
+            _saveButton = saveButton;
+            _sqlDependencyDiagram = sqlDependencyDiagram;
+            _errorService = errorService;
+        }
+
+        public override void Execute()
+        {
+            try
+            {
+                bool isEnabled = _sqlDependencyDiagram != null && _sqlDependencyDiagram.Controls["Model"] != null;
+
+                _printButton.Enabled = isEnabled;
+                _exportButton.Enabled = isEnabled;
+                _saveButton.Enabled = isEnabled;
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+        }
+    }
+}
+
+
+Winform
+-------
+public partial class MyForm : Form
+{
+    private readonly EnableToolStripButtonsCommand _enableToolStripButtonsCommand;
+
+    public MyForm(IErrorService errorService)
+    {
+        InitializeComponent();
+
+        // Initialize the command with references to the buttons and diagram
+        _enableToolStripButtonsCommand = new EnableToolStripButtonsCommand(
+            printToolStripButton,
+            exportToolStripButton,
+            saveToolStripButton,
+            sqlDependencyDiagram,
+            errorService
+        );
+    }
+
+    private void SomeMethodThatEnablesButtons()
+    {
+        // Execute the command to toggle button states
+        _enableToolStripButtonsCommand.Execute();
+    }
+}
