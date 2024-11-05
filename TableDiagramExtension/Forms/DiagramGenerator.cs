@@ -48,7 +48,7 @@ namespace DatabaseDiagram
         private UpdateToolStripButtonsCommand _updateToolStripButtonsCommand;
         private ExportDiagramAsImageCommand exportDiagramAsImageCommand;
 
-        private TestExecuteCommandHandler _commandHandler; // testing
+        private ExportDiagramCommandHandler _commandHandler; // testing
         
 
         #endregion
@@ -85,15 +85,12 @@ namespace DatabaseDiagram
                       saveToolStripButton,
                       _errorService);
 
-                // binding command to button event
-                _commandHandler = new TestExecuteCommandHandler(_errorService);
+                // binding command to export button events
+                _commandHandler = new ExportDiagramCommandHandler(_errorService);                
+                this.pngToolStripMenuItem.Click += (s, e) => _commandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
+                this.jpegToolStripMenuItem.Click += (s, e) => _commandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
+                this.gifToolStripMenuItem.Click += (s, e) => _commandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
 
-                // bind click event to command
-                this.pNGToolStripMenuItem.Click += (s, e) => _commandHandler.ShowMessageCommand.Execute(
-                        new Tuple<ImageFormat, SaveFileDialog, Diagram, IErrorService>(
-                            ImageFormat.Png, saveFileDialog1, sqlDependencyDiagram, _errorService));
-
-                //_commandHandler.UpdateButtonState(); // call every time something changes
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -639,59 +636,59 @@ namespace DatabaseDiagram
             }
         }
 
-        private void pngToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
-                    saveFileDialog1,
-                    sqlDependencyDiagram,
-                    _errorService,
-                    ImageFormat.Png);
+        //private void pngToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
+        //            saveFileDialog1,
+        //            sqlDependencyDiagram,
+        //            _errorService,
+        //            ImageFormat.Png);
 
-                exportDiagramAsImageCommand.Execute();              
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
+        //        exportDiagramAsImageCommand.Execute();              
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorService.LogAndDisplayErrorMessage(ex);
+        //    }
+        //}
 
-        private void jPEGToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
-                    saveFileDialog1,
-                    sqlDependencyDiagram,
-                    _errorService,
-                    ImageFormat.Jpeg);
+        //private void jPEGToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
+        //            saveFileDialog1,
+        //            sqlDependencyDiagram,
+        //            _errorService,
+        //            ImageFormat.Jpeg);
 
-                exportDiagramAsImageCommand.Execute();
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
+        //        exportDiagramAsImageCommand.Execute();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorService.LogAndDisplayErrorMessage(ex);
+        //    }
+        //}
 
-        private void gIFToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
-                    saveFileDialog1,
-                    sqlDependencyDiagram,
-                    _errorService,
-                    ImageFormat.Gif);
+        //private void gIFToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
+        //            saveFileDialog1,
+        //            sqlDependencyDiagram,
+        //            _errorService,
+        //            ImageFormat.Gif);
 
-                exportDiagramAsImageCommand.Execute();
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
+        //        exportDiagramAsImageCommand.Execute();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorService.LogAndDisplayErrorMessage(ex);
+        //    }
+        //}
 
         private void zoomInToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
@@ -777,7 +774,7 @@ namespace DatabaseDiagram
             try
             {
                 // set the status depending on the diagram
-                printToolStripButton.Enabled = exportToolStripButton.Enabled = saveToolStripButton.Enabled = _commandHandler.ShowMessageCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
+                printToolStripButton.Enabled = exportToolStripButton.Enabled = saveToolStripButton.Enabled = _commandHandler.ExportCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
             }
             catch (Exception ex)
             {

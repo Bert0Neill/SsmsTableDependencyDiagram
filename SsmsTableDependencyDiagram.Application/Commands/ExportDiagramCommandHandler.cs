@@ -1,70 +1,57 @@
-﻿using SsmsTableDependencyDiagram.Application.Commands.RelayCmd;
+﻿using Serilog;
+using SsmsTableDependencyDiagram.Application.Commands.RelayCmd;
 using SsmsTableDependencyDiagram.Application.Interfaces;
+using SsmsTableDependencyDiagram.Domain.Resources;
 using Syncfusion.Windows.Forms.Diagram.Controls;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 
 namespace SsmsTableDependencyDiagram.Application.Commands
 {
-    public class TestExecuteCommandHandler
+    public class ExportDiagramCommandHandler
     {
-        public RelayCommand ShowMessageCommand { get; }
+        public RelayCommand ExportCommand { get; }
 
-        private Diagram _sqlDependencyDiagram;
-        private readonly ToolStripButton _printToolStripButton;
-        private readonly ToolStripDropDownButton _exportToolStripButton;
-        private readonly ToolStripButton _saveToolStripButton;
         private readonly IErrorService _errorService;
 
-        public TestExecuteCommandHandler(           
-            IErrorService errorService)
+        public ExportDiagramCommandHandler(IErrorService errorService)
         {
             _errorService = errorService;
 
-            ShowMessageCommand = new RelayCommand(
+            ExportCommand = new RelayCommand(
                execute: OnExecute,
-               canExecute: CanShowMessage);
+               canExecute: CanShowExport);
         }
 
-        //public TestExecuteCommandHandler()
-        //{
-        //    ShowMessageCommand = new RelayCommand(
-        //        execute: OnExecute,
-        //        canExecute: CanShowMessage);
-        //}
-
         // The logic to determine if the button can be clicked
-        private bool CanShowMessage(object parameter)
+        private bool CanShowExport(object parameter)
         {
-            if (parameter is int)
-            {
-                // Check if the diagram is populated
-                //return parameter != null && ((Diagram)parameter).Model.Nodes.Count > 0;
-                //return _sqlDependencyDiagram != null && _sqlDependencyDiagram.Model.Nodes.Count > 0;
-                return (int)parameter > 0;
-            }
+            if (parameter is int) return (int)parameter > 0;
             else return false; // default
         }
 
         // Method to raise CanExecuteChanged for dynamic updates
         public void UpdateButtonState()
         {
-            ShowMessageCommand.RaiseCanExecuteChanged();
+            ExportCommand.RaiseCanExecuteChanged();
         }
 
         private void OnExecute(object parameter)
         {
             ImageFormat imageFormat;
-            SaveFileDialog saveFileDialog;
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            Diagram sqlDependencyDiagram;
 
-            if (parameter is Tuple<ImageFormat, SaveFileDialog, Syncfusion.Windows.Forms.Diagram.Controls.Diagram, IErrorService> tuple)
+            if (parameter is Tuple<ImageFormat, Diagram> tuple)
             {
                 imageFormat = tuple.Item1;
-                saveFileDialog = tuple.Item2;
-                _sqlDependencyDiagram = tuple.Item3;
-                //_errorService = tuple.Item4;
+                sqlDependencyDiagram = tuple.Item2;
+
+                saveFileDialog.FileName = "Diagram.edd";
+                saveFileDialog.Title = TextStrings.SaveFile;
 
                 if (imageFormat == ImageFormat.Png)
                 {
@@ -84,12 +71,12 @@ namespace SsmsTableDependencyDiagram.Application.Commands
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    SaveImage(saveFileDialog.FileName, _sqlDependencyDiagram, imageFormat);
+                    SaveImage(saveFileDialog.FileName, sqlDependencyDiagram, imageFormat);
                 }
             }
         }
 
-        private void SaveImage(string filename, Syncfusion.Windows.Forms.Diagram.Controls.Diagram sqlDependencyDiagram, ImageFormat imageFormat)
+        private void SaveImage(string filename, Diagram sqlDependencyDiagram, ImageFormat imageFormat)
         {
             try
             {

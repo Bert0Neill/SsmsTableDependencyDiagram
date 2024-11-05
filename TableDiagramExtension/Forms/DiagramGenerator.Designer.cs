@@ -56,9 +56,9 @@ namespace DatabaseDiagram
             this.openStripButton = new System.Windows.Forms.ToolStripButton();
             this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.exportToolStripButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.pNGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.jPEGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gIFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.jpegToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gifToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.panel2 = new System.Windows.Forms.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -251,9 +251,9 @@ namespace DatabaseDiagram
             // exportToolStripButton
             // 
             this.exportToolStripButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pNGToolStripMenuItem,
-            this.jPEGToolStripMenuItem,
-            this.gIFToolStripMenuItem});
+            this.pngToolStripMenuItem,
+            this.jpegToolStripMenuItem,
+            this.gifToolStripMenuItem});
             this.exportToolStripButton.Enabled = false;
             this.exportToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("exportToolStripButton.Image")));
             this.exportToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
@@ -266,27 +266,27 @@ namespace DatabaseDiagram
             // 
             // pNGToolStripMenuItem
             // 
-            this.pNGToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pNGToolStripMenuItem.Image")));
-            this.pNGToolStripMenuItem.Name = "pNGToolStripMenuItem";
-            this.pNGToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
-            this.pNGToolStripMenuItem.Text = "PNG";
+            this.pngToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pNGToolStripMenuItem.Image")));
+            this.pngToolStripMenuItem.Name = "pNGToolStripMenuItem";
+            this.pngToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
+            this.pngToolStripMenuItem.Text = "PNG";
 //            this.pNGToolStripMenuItem.Click += new System.EventHandler(this.pngToolStripMenuItem_Click);
             // 
             // jPEGToolStripMenuItem
             // 
-            this.jPEGToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("jPEGToolStripMenuItem.Image")));
-            this.jPEGToolStripMenuItem.Name = "jPEGToolStripMenuItem";
-            this.jPEGToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
-            this.jPEGToolStripMenuItem.Text = "JPEG";
-            this.jPEGToolStripMenuItem.Click += new System.EventHandler(this.jPEGToolStripMenuItem_Click);
+            this.jpegToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("jPEGToolStripMenuItem.Image")));
+            this.jpegToolStripMenuItem.Name = "jPEGToolStripMenuItem";
+            this.jpegToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
+            this.jpegToolStripMenuItem.Text = "JPEG";
+            //this.jpegToolStripMenuItem.Click += new System.EventHandler(this.jPEGToolStripMenuItem_Click);
             // 
             // gIFToolStripMenuItem
             // 
-            this.gIFToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("gIFToolStripMenuItem.Image")));
-            this.gIFToolStripMenuItem.Name = "gIFToolStripMenuItem";
-            this.gIFToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
-            this.gIFToolStripMenuItem.Text = "GIF";
-            this.gIFToolStripMenuItem.Click += new System.EventHandler(this.gIFToolStripMenuItem_Click);
+            this.gifToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("gIFToolStripMenuItem.Image")));
+            this.gifToolStripMenuItem.Name = "gIFToolStripMenuItem";
+            this.gifToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
+            this.gifToolStripMenuItem.Text = "GIF";
+            //this.gifToolStripMenuItem.Click += new System.EventHandler(this.gIFToolStripMenuItem_Click);
             // 
             // printToolStripButton
             // 
@@ -4517,9 +4517,9 @@ namespace DatabaseDiagram
         private System.Windows.Forms.ToolStripButton saveToolStripButton;
         private System.Windows.Forms.ImageList ImageList;
         private System.Windows.Forms.ToolStripDropDownButton exportToolStripButton;
-        private System.Windows.Forms.ToolStripMenuItem pNGToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem jPEGToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem gIFToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pngToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem jpegToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gifToolStripMenuItem;
         private Syncfusion.Windows.Forms.Diagram.Controls.Diagram sqlDependencyDiagram;
         private Syncfusion.Windows.Forms.Diagram.Model model1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
