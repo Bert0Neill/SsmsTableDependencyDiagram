@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace SsmsTableDependencyDiagram.Application.Commands
 {
-    public class ExportDiagramAsImageCommand : ICommand
+    public class ExportDiagramAsImageCommand //: ICommand
     {
         private readonly SaveFileDialog _saveFileDialog;
         private readonly Diagram _sqlDependencyDiagram;

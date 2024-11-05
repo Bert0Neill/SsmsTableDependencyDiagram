@@ -1,5 +1,6 @@
 ﻿using SsmsTableDependencyDiagram.Application.Commands.RelayCmd;
 using SsmsTableDependencyDiagram.Application.Interfaces;
+using Syncfusion.Windows.Forms.Diagram.Controls;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -10,21 +11,41 @@ namespace SsmsTableDependencyDiagram.Application.Commands
     public class TestExecuteCommandHandler
     {
         public RelayCommand ShowMessageCommand { get; }
-        IErrorService _errorService;
-        private Syncfusion.Windows.Forms.Diagram.Controls.Diagram _sqlDependencyDiagram;
 
-        public TestExecuteCommandHandler()
+        private Diagram _sqlDependencyDiagram;
+        private readonly ToolStripButton _printToolStripButton;
+        private readonly ToolStripDropDownButton _exportToolStripButton;
+        private readonly ToolStripButton _saveToolStripButton;
+        private readonly IErrorService _errorService;
+
+        public TestExecuteCommandHandler(           
+            IErrorService errorService)
         {
+            _errorService = errorService;
+
             ShowMessageCommand = new RelayCommand(
-                execute: OnExecute,
-                canExecute: CanShowMessage);
+               execute: OnExecute,
+               canExecute: CanShowMessage);
         }
+
+        //public TestExecuteCommandHandler()
+        //{
+        //    ShowMessageCommand = new RelayCommand(
+        //        execute: OnExecute,
+        //        canExecute: CanShowMessage);
+        //}
 
         // The logic to determine if the button can be clicked
         private bool CanShowMessage(object parameter)
         {
-            // Check if the diagram is populated
-            return _sqlDependencyDiagram != null && _sqlDependencyDiagram.Model.Nodes.Count > 0;
+            if (parameter is int)
+            {
+                // Check if the diagram is populated
+                //return parameter != null && ((Diagram)parameter).Model.Nodes.Count > 0;
+                //return _sqlDependencyDiagram != null && _sqlDependencyDiagram.Model.Nodes.Count > 0;
+                return (int)parameter > 0;
+            }
+            else return false; // default
         }
 
         // Method to raise CanExecuteChanged for dynamic updates
@@ -43,7 +64,7 @@ namespace SsmsTableDependencyDiagram.Application.Commands
                 imageFormat = tuple.Item1;
                 saveFileDialog = tuple.Item2;
                 _sqlDependencyDiagram = tuple.Item3;
-                _errorService = tuple.Item4;
+                //_errorService = tuple.Item4;
 
                 if (imageFormat == ImageFormat.Png)
                 {

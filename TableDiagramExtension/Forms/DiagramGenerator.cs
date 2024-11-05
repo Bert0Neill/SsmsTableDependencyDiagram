@@ -4,12 +4,15 @@
 // Any infringement will be prosecuted under applicable laws. 
 #endregion
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Internal.VisualStudio.PlatformUI;
+using Microsoft.SqlServer.Management.Smo;
 using Serilog;
 using SsmsTableDependencyDiagram.Application.Commands;
 using SsmsTableDependencyDiagram.Application.Interfaces;
 using SsmsTableDependencyDiagram.Domain.Models;
 using SsmsTableDependencyDiagram.Domain.Resources;
 using Syncfusion.Windows.Forms.Diagram;
+using Syncfusion.Windows.Forms.Diagram.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,6 +26,7 @@ using System.Windows.Forms;
 using System.Xml;
 using TableDiagramExtension.Controllers;
 using static SsmsTableDependencyDiagram.Domain.Models.CustomDiagramTable;
+
 
 namespace DatabaseDiagram
 {
@@ -82,14 +86,14 @@ namespace DatabaseDiagram
                       _errorService);
 
                 // binding command to button event
-                _commandHandler = new TestExecuteCommandHandler();                
-                
+                _commandHandler = new TestExecuteCommandHandler(_errorService);
 
+                // bind click event to command
                 this.pNGToolStripMenuItem.Click += (s, e) => _commandHandler.ShowMessageCommand.Execute(
-                        new Tuple<ImageFormat, SaveFileDialog, Syncfusion.Windows.Forms.Diagram.Controls.Diagram, IErrorService>(
+                        new Tuple<ImageFormat, SaveFileDialog, Diagram, IErrorService>(
                             ImageFormat.Png, saveFileDialog1, sqlDependencyDiagram, _errorService));
 
-                _commandHandler.UpdateButtonState(); // call every time something changes
+                //_commandHandler.UpdateButtonState(); // call every time something changes
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -597,7 +601,7 @@ namespace DatabaseDiagram
                 saveFileDialog1.Title = TextStrings.SaveFile;
                 saveFileDialog1.Filter = @"EDD file(*.edd)|*.edd|XML file(*.xml)|*.xml|All files|*.*";
 
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     sqlDependencyDiagram.SaveBinary(saveFileDialog1.FileName);
                 }
@@ -616,7 +620,7 @@ namespace DatabaseDiagram
                 saveFileDialog1.Title = "Save File As:";
                 saveFileDialog1.FileName = "Diagram";
 
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     switch (saveFileDialog1.FilterIndex)
                     {
@@ -753,7 +757,7 @@ namespace DatabaseDiagram
             {                
                 this.openFileDialog1.Filter = "EDD file(*.edd)|*.edd";
 
-                if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+                if (this.openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     this.sqlDependencyDiagram.LoadBinary(this.openFileDialog1.FileName);
                     this.sqlDependencyDiagram.Refresh();
@@ -772,7 +776,8 @@ namespace DatabaseDiagram
         {
             try
             {
-                _updateToolStripButtonsCommand.Execute();
+                // set the status depending on the diagram
+                printToolStripButton.Enabled = exportToolStripButton.Enabled = saveToolStripButton.Enabled = _commandHandler.ShowMessageCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
             }
             catch (Exception ex)
             {
@@ -899,6 +904,9 @@ namespace DatabaseDiagram
             IsCompact = false;
             this.GenerateDiagram(false);
 
+            sqlDependencyDiagram.Enabled = true; // disable for toolstrip enablement
+            AreToolStripButtonsEnabled();
+
             Cursor.Current = Cursors.Default;
         }
 
@@ -930,9 +938,8 @@ namespace DatabaseDiagram
                 sqlDependencyDiagram.View.SelectionList.Clear();
 
                 // enable buttons
-                //this.AreToolStripButtonsEnabled();
-                _commandHandler.UpdateButtonState(); // call every time something changes                
-                pNGToolStripMenuItem.Enabled = _commandHandler.ShowMessageCommand.CanExecute(null); // Set the initial enabled state of the button based on CanExecute
+                this.AreToolStripButtonsEnabled();
+                                                     //                 
             }
             catch (Exception ex)
             {

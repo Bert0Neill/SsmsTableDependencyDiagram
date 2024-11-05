@@ -4,7 +4,7 @@ using SsmsTableDependencyDiagram.Application.Interfaces;
 using Syncfusion.Windows.Forms.Diagram.Controls;
 namespace SsmsTableDependencyDiagram.Application.Commands
 {
-    public class UpdateToolStripButtonsCommand : ICommand
+    public class UpdateToolStripButtonsCommand //: ICommand
     {
         private readonly Diagram _sqlDependencyDiagram;
         private readonly ToolStripButton _printToolStripButton;

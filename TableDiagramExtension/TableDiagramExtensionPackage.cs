@@ -43,7 +43,7 @@ namespace TableDiagramExtension
     {
         #region Class Variables
         public const string PackageGuidString = "1bc97246-6e95-4741-88c7-e6b2496e371f";
-        private SharedData _sharedData { get; set; }
+        internal SharedData _sharedData { get; set; }
         private ILogger _logger;
         private IErrorService _errorService;
 
