@@ -931,7 +931,8 @@ namespace DatabaseDiagram
 
                 // enable buttons
                 //this.AreToolStripButtonsEnabled();
-                _commandHandler.UpdateButtonState(); // call every time something changes
+                _commandHandler.UpdateButtonState(); // call every time something changes                
+                pNGToolStripMenuItem.Enabled = _commandHandler.ShowMessageCommand.CanExecute(null); // Set the initial enabled state of the button based on CanExecute
             }
             catch (Exception ex)
             {
