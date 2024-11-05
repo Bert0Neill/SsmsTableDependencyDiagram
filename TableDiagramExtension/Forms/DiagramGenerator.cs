@@ -43,6 +43,10 @@ namespace DatabaseDiagram
         #region Commands
         private UpdateToolStripButtonsCommand _updateToolStripButtonsCommand;
         private ExportDiagramAsImageCommand exportDiagramAsImageCommand;
+
+        private TestExecuteCommandHandler _commandHandler; // testing
+        
+
         #endregion
 
         #region Form initialize
@@ -76,6 +80,16 @@ namespace DatabaseDiagram
                       exportToolStripButton,
                       saveToolStripButton,
                       _errorService);
+
+                // binding command to button event
+                _commandHandler = new TestExecuteCommandHandler();                
+                
+
+                this.pNGToolStripMenuItem.Click += (s, e) => _commandHandler.ShowMessageCommand.Execute(
+                        new Tuple<ImageFormat, SaveFileDialog, Syncfusion.Windows.Forms.Diagram.Controls.Diagram, IErrorService>(
+                            ImageFormat.Png, saveFileDialog1, sqlDependencyDiagram, _errorService));
+
+                _commandHandler.UpdateButtonState(); // call every time something changes
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -916,7 +930,8 @@ namespace DatabaseDiagram
                 sqlDependencyDiagram.View.SelectionList.Clear();
 
                 // enable buttons
-                this.AreToolStripButtonsEnabled();
+                //this.AreToolStripButtonsEnabled();
+                _commandHandler.UpdateButtonState(); // call every time something changes
             }
             catch (Exception ex)
             {

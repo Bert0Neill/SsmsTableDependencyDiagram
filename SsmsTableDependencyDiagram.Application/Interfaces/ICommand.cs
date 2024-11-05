@@ -8,8 +8,9 @@ namespace SsmsTableDependencyDiagram.Application.Interfaces
 {
     public interface ICommand
     {
-        void Execute();
-        bool CanExecute();
+        event EventHandler CanExecuteChanged;
+        bool CanExecute(object parameter);
+        void Execute(object parameter);
     }
 
 }

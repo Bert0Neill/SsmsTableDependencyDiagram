@@ -318,9 +318,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\RelayCommand\RelayCommand.cs" />
     <Compile Include="Commands\UpdateToolStripButtonsCommand.cs" />
     <Compile Include="Commands\ExportDiagramAsImageCommand.cs" />
-    <Compile Include="Commands\MyButtonClickCommand.cs" />
+    <Compile Include="Commands\TestExecuteCommandHandler.cs" />
     <Compile Include="Interfaces\ICommand.cs" />
     <Compile Include="Interfaces\IConvertService.cs" />
     <Compile Include="Interfaces\IErrorService.cs" />

@@ -45,7 +45,8 @@ namespace SsmsTableDependencyDiagram.Application.Commands
         public bool CanExecute()
         {
             // The buttons are enabled only if the diagram and its model are not null.            
-            return _sqlDependencyDiagram.Model.ChildCount != 0;                        
+            //return _sqlDependencyDiagram.Model.ChildCount != 0;
+            return _sqlDependencyDiagram.Model.Nodes.Count != 0;
         }
     }
 }
