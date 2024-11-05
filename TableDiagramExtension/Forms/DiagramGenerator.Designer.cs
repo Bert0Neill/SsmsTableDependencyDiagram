@@ -298,7 +298,7 @@ namespace DatabaseDiagram
             this.printToolStripButton.Size = new System.Drawing.Size(61, 28);
             this.printToolStripButton.Text = "Print";
             this.printToolStripButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.printToolStripButton.Click += new System.EventHandler(this.printToolStripButton_Click);
+            //this.printToolStripButton.Click += new System.EventHandler(this.printToolStripButton_Click);
             // 
             // panel2
             // 

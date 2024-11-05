@@ -46,9 +46,9 @@ namespace DatabaseDiagram
 
         #region Commands
         private UpdateToolStripButtonsCommand _updateToolStripButtonsCommand;
-        private ExportDiagramAsImageCommand exportDiagramAsImageCommand;
 
-        private ExportDiagramCommandHandler _commandHandler; // testing
+        private ExportDiagramCommandHandler _exportCommandHandler; // export diagram
+        private PrintDiagramCommandHandler _printCommandHandler; // export diagram
         
 
         #endregion
@@ -77,19 +77,22 @@ namespace DatabaseDiagram
                 
                 _sharedData = sharedData;
 
-                // instantiate commands
-                _updateToolStripButtonsCommand = new UpdateToolStripButtonsCommand(
-                      sqlDependencyDiagram,
-                      printToolStripButton,
-                      exportToolStripButton,
-                      saveToolStripButton,
-                      _errorService);
+                //// instantiate commands
+                //_updateToolStripButtonsCommand = new UpdateToolStripButtonsCommand(
+                //      sqlDependencyDiagram,
+                //      printToolStripButton,
+                //      exportToolStripButton,
+                //      saveToolStripButton,
+                //      _errorService);
+
+                _printCommandHandler = new PrintDiagramCommandHandler(_errorService);
+                this.printToolStripButton.Click += (s, e) => _printCommandHandler.PrintCommand.Execute(new Tuple<Diagram>(sqlDependencyDiagram));
 
                 // binding command to export button events
-                _commandHandler = new ExportDiagramCommandHandler(_errorService);                
-                this.pngToolStripMenuItem.Click += (s, e) => _commandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
-                this.jpegToolStripMenuItem.Click += (s, e) => _commandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
-                this.gifToolStripMenuItem.Click += (s, e) => _commandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
+                _exportCommandHandler = new ExportDiagramCommandHandler(_errorService);                
+                this.pngToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
+                this.jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
+                this.gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
 
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
@@ -726,27 +729,27 @@ namespace DatabaseDiagram
             }
         }        
 
-        private void printToolStripButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (sqlDependencyDiagram != null)
-                {
-                    PrintDocument printDoc = sqlDependencyDiagram.CreatePrintDocument();
-                    PrintPreviewDialog printPreviewDlg = new PrintPreviewDialog();
-                    printPreviewDlg.StartPosition = FormStartPosition.CenterScreen;
-                    printDoc.PrinterSettings.FromPage = 0;
-                    printDoc.PrinterSettings.ToPage = 0;
-                    printDoc.PrinterSettings.PrintRange = PrintRange.AllPages;
-                    printPreviewDlg.Document = printDoc;
-                    printPreviewDlg.ShowDialog(this);
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
+        //private void printToolStripButton_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (sqlDependencyDiagram != null)
+        //        {
+        //            PrintDocument printDoc = sqlDependencyDiagram.CreatePrintDocument();
+        //            PrintPreviewDialog printPreviewDlg = new PrintPreviewDialog();
+        //            printPreviewDlg.StartPosition = FormStartPosition.CenterScreen;
+        //            printDoc.PrinterSettings.FromPage = 0;
+        //            printDoc.PrinterSettings.ToPage = 0;
+        //            printDoc.PrinterSettings.PrintRange = PrintRange.AllPages;
+        //            printPreviewDlg.Document = printDoc;
+        //            printPreviewDlg.ShowDialog(this);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorService.LogAndDisplayErrorMessage(ex);
+        //    }
+        //}
 
         private void openStripButton_Click(object sender, EventArgs e)
         {
@@ -774,7 +777,7 @@ namespace DatabaseDiagram
             try
             {
                 // set the status depending on the diagram
-                printToolStripButton.Enabled = exportToolStripButton.Enabled = saveToolStripButton.Enabled = _commandHandler.ExportCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
+                printToolStripButton.Enabled = exportToolStripButton.Enabled = saveToolStripButton.Enabled = _exportCommandHandler.ExportCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
             }
             catch (Exception ex)
             {
