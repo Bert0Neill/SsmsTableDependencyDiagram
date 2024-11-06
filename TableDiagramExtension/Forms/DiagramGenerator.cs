@@ -4,8 +4,6 @@
 // Any infringement will be prosecuted under applicable laws. 
 #endregion
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Internal.VisualStudio.PlatformUI;
-using Microsoft.SqlServer.Management.Smo;
 using Serilog;
 using SsmsTableDependencyDiagram.Application.Commands;
 using SsmsTableDependencyDiagram.Application.Interfaces;
@@ -20,13 +18,10 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Drawing.Printing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using TableDiagramExtension.Controllers;
 using static SsmsTableDependencyDiagram.Domain.Models.CustomDiagramTable;
-
 
 namespace DatabaseDiagram
 {
@@ -49,7 +44,7 @@ namespace DatabaseDiagram
 
         private ExportDiagramCommandHandler _exportCommandHandler; // export diagram
         private PrintDiagramCommandHandler _printCommandHandler; // export diagram
-        
+        private DatabaseComboCommandHandler _databaseCommandHandler; // database combobox
 
         #endregion
 
@@ -77,14 +72,8 @@ namespace DatabaseDiagram
                 
                 _sharedData = sharedData;
 
-                //// instantiate commands
-                //_updateToolStripButtonsCommand = new UpdateToolStripButtonsCommand(
-                //      sqlDependencyDiagram,
-                //      printToolStripButton,
-                //      exportToolStripButton,
-                //      saveToolStripButton,
-                //      _errorService);
-
+              
+                // binding command to print event
                 _printCommandHandler = new PrintDiagramCommandHandler(_errorService);
                 this.printToolStripButton.Click += (s, e) => _printCommandHandler.PrintCommand.Execute(new Tuple<Diagram>(sqlDependencyDiagram));
 
@@ -94,6 +83,13 @@ namespace DatabaseDiagram
                 this.jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
                 this.gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
 
+                _databaseCommandHandler = new DatabaseComboCommandHandler(_sqlService, _errorService, cboDatabase, cboTable, sqlDependencyDiagram);
+
+                //cboDatabase.SelectedIndexChanged += (s, e) =>
+                //{
+                //    if (databaseCommandHandler.DatabaseSelectionCommand.CanExecute(null))
+                //        databaseCommandHandler.DatabaseSelectionCommand.Execute(_sharedData);
+                //};
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -270,7 +266,7 @@ namespace DatabaseDiagram
                 sortedlist.Clear();
 
                 //Make connection between nodes
-                ConnectNodes(Relationships, dependencyTables); // pass in array of tables and relationship[s
+                ConnectNodes(Relationships, dependencyTables); // pass in array of tables and relationships
                 sqlDependencyDiagram.Model.EndUpdate();
                 sqlDependencyDiagram.View.SelectionList.Clear();
             }
@@ -639,60 +635,6 @@ namespace DatabaseDiagram
             }
         }
 
-        //private void pngToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
-        //            saveFileDialog1,
-        //            sqlDependencyDiagram,
-        //            _errorService,
-        //            ImageFormat.Png);
-
-        //        exportDiagramAsImageCommand.Execute();              
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _errorService.LogAndDisplayErrorMessage(ex);
-        //    }
-        //}
-
-        //private void jPEGToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
-        //            saveFileDialog1,
-        //            sqlDependencyDiagram,
-        //            _errorService,
-        //            ImageFormat.Jpeg);
-
-        //        exportDiagramAsImageCommand.Execute();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _errorService.LogAndDisplayErrorMessage(ex);
-        //    }
-        //}
-
-        //private void gIFToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        exportDiagramAsImageCommand = new ExportDiagramAsImageCommand(
-        //            saveFileDialog1,
-        //            sqlDependencyDiagram,
-        //            _errorService,
-        //            ImageFormat.Gif);
-
-        //        exportDiagramAsImageCommand.Execute();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _errorService.LogAndDisplayErrorMessage(ex);
-        //    }
-        //}
-
         private void zoomInToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             try
@@ -728,28 +670,6 @@ namespace DatabaseDiagram
                 _errorService.LogAndDisplayErrorMessage(ex);
             }
         }        
-
-        //private void printToolStripButton_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        if (sqlDependencyDiagram != null)
-        //        {
-        //            PrintDocument printDoc = sqlDependencyDiagram.CreatePrintDocument();
-        //            PrintPreviewDialog printPreviewDlg = new PrintPreviewDialog();
-        //            printPreviewDlg.StartPosition = FormStartPosition.CenterScreen;
-        //            printDoc.PrinterSettings.FromPage = 0;
-        //            printDoc.PrinterSettings.ToPage = 0;
-        //            printDoc.PrinterSettings.PrintRange = PrintRange.AllPages;
-        //            printPreviewDlg.Document = printDoc;
-        //            printPreviewDlg.ShowDialog(this);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _errorService.LogAndDisplayErrorMessage(ex);
-        //    }
-        //}
 
         private void openStripButton_Click(object sender, EventArgs e)
         {
@@ -842,8 +762,6 @@ namespace DatabaseDiagram
             {
                 Cursor.Current = Cursors.WaitCursor;
 
-                List<DatabaseMetaData> initialData;
-
                 // disable event as new data will be bound and trigger this event & disable any user interaction until tables retrieved
                 this.cboTable.SelectedIndexChanged -= new System.EventHandler(this.cboTable_SelectedIndexChanged);
                 this.cboTable.Enabled = false;
@@ -854,22 +772,10 @@ namespace DatabaseDiagram
                 sqlDependencyDiagram.View.SelectionList.Clear();
                 sqlDependencyDiagram.EndUpdate();
 
-                AreToolStripButtonsEnabled();
+                AreToolStripButtonsEnabled(); // disable appropiate buttons
 
-                string selectedDatabase = this.cboDatabase.ComboBox.SelectedValue.ToString();
-                if (selectedDatabase == TextStrings.PleaseSelectDatabase) return;
+                _databaseCommandHandler.DatabaseSelectionCommand.Execute(_sharedData);
 
-                initialData = _sqlService.RetrieveDatabaseMetaData(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase);
-                initialData.Insert(0, new DatabaseMetaData() { TABLE_NAME = TextStrings.PleaseSelectTable });
-                if (initialData.Count > 1)
-                {
-                    var distinctTables = initialData.GroupBy(p => p.TABLE_NAME).Select(g => g.First()).ToList();
-                    
-                    this.cboTable.ComboBox.DataSource = null;
-                    this.cboTable.ComboBox.DataSource = distinctTables;
-                    this.cboTable.ComboBox.DisplayMember = TextStrings.TABLE_NAME;
-                    this.cboTable.Enabled = true;
-                }
             }
             catch (Exception ex)
             {
@@ -939,7 +845,7 @@ namespace DatabaseDiagram
 
                 // enable buttons
                 this.AreToolStripButtonsEnabled();
-                                                     //                 
+                                                         
             }
             catch (Exception ex)
             {
