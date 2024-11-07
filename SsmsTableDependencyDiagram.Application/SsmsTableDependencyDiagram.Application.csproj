@@ -322,6 +322,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\TableComboCommandHandler.cs" />
     <Compile Include="Commands\DatabaseComboCommandHandler.cs" />
     <Compile Include="Commands\PrintDiagramCommandHandler.cs" />
     <Compile Include="Commands\RelayCommand\RelayCommand.cs" />

@@ -8,6 +8,8 @@ namespace SsmsTableDependencyDiagram.Application.Interfaces
 {
     public interface IToolStripButtonEnabler
     {
-        void AreToolStripButtonsEnabled();        
+        void AreToolStripButtonsEnabled();
+        void SubscribeToTableEvent();
+        void UnsubscribeFromTableEvent();
     }
 }

@@ -172,7 +172,6 @@ namespace DatabaseDiagram
             this.cboDatabase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboDatabase.Name = "cboDatabase";
             this.cboDatabase.Size = new System.Drawing.Size(400, 31);
-            //this.cboDatabase.SelectedIndexChanged += new System.EventHandler(this.cboDatabase_SelectedIndexChanged);
             // 
             // toolStripSeparator2
             // 
@@ -190,7 +189,6 @@ namespace DatabaseDiagram
             this.cboTable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboTable.Name = "cboTable";
             this.cboTable.Size = new System.Drawing.Size(400, 31);
-            this.cboTable.SelectedIndexChanged += new System.EventHandler(this.cboTable_SelectedIndexChanged);
             // 
             // viewSplitToolStripSplitButton
             // 
@@ -270,7 +268,6 @@ namespace DatabaseDiagram
             this.pngToolStripMenuItem.Name = "pNGToolStripMenuItem";
             this.pngToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
             this.pngToolStripMenuItem.Text = "PNG";
-//            this.pNGToolStripMenuItem.Click += new System.EventHandler(this.pngToolStripMenuItem_Click);
             // 
             // jPEGToolStripMenuItem
             // 
@@ -278,7 +275,6 @@ namespace DatabaseDiagram
             this.jpegToolStripMenuItem.Name = "jPEGToolStripMenuItem";
             this.jpegToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
             this.jpegToolStripMenuItem.Text = "JPEG";
-            //this.jpegToolStripMenuItem.Click += new System.EventHandler(this.jPEGToolStripMenuItem_Click);
             // 
             // gIFToolStripMenuItem
             // 
@@ -286,7 +282,6 @@ namespace DatabaseDiagram
             this.gifToolStripMenuItem.Name = "gIFToolStripMenuItem";
             this.gifToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
             this.gifToolStripMenuItem.Text = "GIF";
-            //this.gifToolStripMenuItem.Click += new System.EventHandler(this.gIFToolStripMenuItem_Click);
             // 
             // printToolStripButton
             // 
@@ -298,7 +293,6 @@ namespace DatabaseDiagram
             this.printToolStripButton.Size = new System.Drawing.Size(61, 28);
             this.printToolStripButton.Text = "Print";
             this.printToolStripButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            //this.printToolStripButton.Click += new System.EventHandler(this.printToolStripButton_Click);
             // 
             // panel2
             // 

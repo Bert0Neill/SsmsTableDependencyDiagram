@@ -190,7 +190,7 @@
       <Name>SsmsTableDependencyDiagram.Application</Name>
     </ProjectReference>
     <ProjectReference Include="..\SsmsTableDependencyDiagram.Domain\SsmsTableDependencyDiagram.Domain.csproj">
-      <Project>{DB76A4C5-D5CA-49F4-B75E-7BA721E09C5A}</Project>
+      <Project>{db76a4c5-d5ca-49f4-b75e-7ba721e09c5a}</Project>
       <Name>SsmsTableDependencyDiagram.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\SsmsTableDependencyDiagram.Infrastructure\SsmsTableDependencyDiagram.Infrastructure.csproj">

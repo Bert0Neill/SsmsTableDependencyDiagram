@@ -46,6 +46,7 @@ namespace DatabaseDiagram
         private ExportDiagramCommandHandler _exportCommandHandler; // export diagram
         private PrintDiagramCommandHandler _printCommandHandler; // export diagram
         private DatabaseComboCommandHandler _databaseCommandHandler; // database combobox
+        private TableComboCommandHandler _tableComboCommandHandler; // table combobox
 
         #endregion
 
@@ -69,7 +70,6 @@ namespace DatabaseDiagram
                 InitailizeDiagram();
                 DiagramAppearance();
                 sqlDependencyDiagram.EndUpdate();
-                //sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
                 
                 _sharedData = sharedData;
 
@@ -85,8 +85,11 @@ namespace DatabaseDiagram
                 this.gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
 
                 // bind command to database dropdown
-                _databaseCommandHandler = new DatabaseComboCommandHandler(_sqlService, _errorService, _sharedData, cboTable, sqlDependencyDiagram, this, cboTable_SelectedIndexChanged);
+                _databaseCommandHandler = new DatabaseComboCommandHandler(_sqlService, _errorService, _sharedData, cboTable, sqlDependencyDiagram, this);
                 cboDatabase.SelectedIndexChanged += (s, e) => _databaseCommandHandler.Execute(cboDatabase.ComboBox.SelectedValue);
+
+                _tableComboCommandHandler = new TableComboCommandHandler(this.viewSplitToolStripSplitButton, _errorService);
+                cboTable.SelectedIndexChanged += (s, e) => _tableComboCommandHandler.Execute(this.cboTable.ComboBox.SelectedValue);
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -352,25 +355,25 @@ namespace DatabaseDiagram
             finally { Cursor.Current = Cursors.Default; }
         }
 
-        private void cboTable_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                Cursor.Current = Cursors.WaitCursor;
+        //private void cboTable_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        Cursor.Current = Cursors.WaitCursor;
 
-                this.viewSplitToolStripSplitButton.Enabled = false;
-                DatabaseMetaData selectedTable = (DatabaseMetaData)this.cboTable.ComboBox.SelectedValue;
+        //        this.viewSplitToolStripSplitButton.Enabled = false;
+        //        DatabaseMetaData selectedTable = (DatabaseMetaData)this.cboTable.ComboBox.SelectedValue;
 
-                if (selectedTable.TABLE_NAME == TextStrings.PleaseSelectTable) return;
+        //        if (selectedTable.TABLE_NAME == TextStrings.PleaseSelectTable) return;
 
-                this.viewSplitToolStripSplitButton.Enabled = true; // enable user to generate diagram
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-            finally { Cursor.Current = Cursors.Default; }
-        }
+        //        this.viewSplitToolStripSplitButton.Enabled = true; // enable user to generate diagram
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorService.LogAndDisplayErrorMessage(ex);
+        //    }
+        //    finally { Cursor.Current = Cursors.Default; }
+        //}
 
         //private void cboDatabase_SelectedIndexChanged(object sender, EventArgs e)
         //{
@@ -852,6 +855,18 @@ namespace DatabaseDiagram
             {
                 _errorService.LogAndDisplayErrorMessage(ex);
             }
+        }
+
+        public void SubscribeToTableEvent()
+        {
+            // Subscribe to SelectedIndexChanged
+            cboTable.SelectedIndexChanged += (s, e) => _tableComboCommandHandler.Execute(this.cboTable.ComboBox.SelectedValue);
+        }
+
+        public void UnsubscribeFromTableEvent()
+        {
+            // Unsubscribe from SelectedIndexChanged
+            cboTable.SelectedIndexChanged -= (s, e) => _tableComboCommandHandler.Execute(this.cboTable.ComboBox.SelectedValue);
         }
 
         #endregion
