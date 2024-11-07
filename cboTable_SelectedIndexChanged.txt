@@ -1,0 +1,42 @@
+public class TableSelectionChangedCommandHandler : RelayCommand
+{
+    private readonly IErrorService _errorService;
+    private readonly ToolStripComboBox cboTable;
+    private readonly ToolStripDropDownButton viewSplitToolStripSplitButton;
+
+    public TableSelectionChangedCommandHandler(IErrorService errorService, ToolStripComboBox cboTable, ToolStripDropDownButton viewSplitToolStripSplitButton)
+    {
+        _errorService = errorService;
+        this.cboTable = cboTable;
+        this.viewSplitToolStripSplitButton = viewSplitToolStripSplitButton;
+    }
+
+    public override void Execute(object parameter)
+    {
+        try
+        {
+            Cursor.Current = Cursors.WaitCursor;
+
+            viewSplitToolStripSplitButton.Enabled = false;
+            DatabaseMetaData selectedTable = (DatabaseMetaData)cboTable.ComboBox.SelectedValue;
+
+            if (selectedTable.TABLE_NAME == TextStrings.PleaseSelectTable) return;
+
+            viewSplitToolStripSplitButton.Enabled = true; // enable user to generate diagram
+        }
+        catch (Exception ex)
+        {
+            _errorService.LogAndDisplayErrorMessage(ex);
+        }
+        finally
+        {
+            Cursor.Current = Cursors.Default;
+        }
+    }
+}
+
+
+Winform
+--------
+ var _tableSelectionChangedCommandHandler = new TableSelectionChangedCommandHandler(_errorService, cboTable, viewSplitToolStripSplitButton);
+    cboTable.SelectedIndexChanged += (s, e) => _tableSelectionChangedCommandHandler.Execute(null);

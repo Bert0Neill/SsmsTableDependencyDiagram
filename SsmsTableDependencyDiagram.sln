@@ -34,15 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commands", "Commands", "{178B4EF5-8C82-4B9E-8CAA-FB21C138492E}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\Users\owner\Downloads\Commands\AreToolStripButtonsEnabled.txt = ..\..\..\Users\owner\Downloads\Commands\AreToolStripButtonsEnabled.txt
-		..\..\..\Users\owner\Downloads\Commands\cboDatabase_SelectedIndexChanged.txt = ..\..\..\Users\owner\Downloads\Commands\cboDatabase_SelectedIndexChanged.txt
-		..\..\..\Users\owner\Downloads\Commands\cboTable_SelectedIndexChanged.txt = ..\..\..\Users\owner\Downloads\Commands\cboTable_SelectedIndexChanged.txt
 		cboDatabase_SelectedIndexChanged.txt = cboDatabase_SelectedIndexChanged.txt
-		..\..\..\Users\owner\Downloads\Commands\compactViewToolStripMenuItem_Click.txt = ..\..\..\Users\owner\Downloads\Commands\compactViewToolStripMenuItem_Click.txt
-		..\..\..\Users\owner\Downloads\Commands\extendedViewToolStripMenuItem_Click.txt = ..\..\..\Users\owner\Downloads\Commands\extendedViewToolStripMenuItem_Click.txt
-		..\..\..\Users\owner\Downloads\Commands\GenerateDiagram.txt = ..\..\..\Users\owner\Downloads\Commands\GenerateDiagram.txt
-		..\..\..\Users\owner\Downloads\Commands\InitializeDiagramFromXMLData.txt = ..\..\..\Users\owner\Downloads\Commands\InitializeDiagramFromXMLData.txt
-		..\..\..\Users\owner\Downloads\Commands\Load Command v1.txt = ..\..\..\Users\owner\Downloads\Commands\Load Command v1.txt
+		cboTable_SelectedIndexChanged.txt = cboTable_SelectedIndexChanged.txt
 	EndProjectSection
 EndProject
 Global

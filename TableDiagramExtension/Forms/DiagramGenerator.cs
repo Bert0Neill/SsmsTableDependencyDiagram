@@ -20,6 +20,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using TableDiagramExtension.Controllers;
 using static SsmsTableDependencyDiagram.Domain.Models.CustomDiagramTable;
 
@@ -68,7 +69,7 @@ namespace DatabaseDiagram
                 InitailizeDiagram();
                 DiagramAppearance();
                 sqlDependencyDiagram.EndUpdate();
-                sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
+                //sqlDependencyDiagram.EventSink.NodeClick += new NodeMouseEventHandler(EventSink_NodeClick);
                 
                 _sharedData = sharedData;
 
@@ -83,6 +84,7 @@ namespace DatabaseDiagram
                 this.jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
                 this.gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
 
+                // bind command to database dropdown
                 _databaseCommandHandler = new DatabaseComboCommandHandler(_sqlService, _errorService, _sharedData, cboTable, sqlDependencyDiagram, this, cboTable_SelectedIndexChanged);
                 cboDatabase.SelectedIndexChanged += (s, e) => _databaseCommandHandler.Execute(cboDatabase.ComboBox.SelectedValue);
 
@@ -119,9 +121,10 @@ namespace DatabaseDiagram
             this.sqlDependencyDiagram.Model.MinimumSize = sqlDependencyDiagram.View.ClientRectangle.Size;
             this.sqlDependencyDiagram.Model.SizeToContent = true;
 
-            // Where diagram is the instance of the Diagram control.
+            // sqlDependencyDiagram is the instance of the Diagram control.
             this.sqlDependencyDiagram.EventSink.NodeMouseEnter += EventSink_NodeMouseEnter;
             this.sqlDependencyDiagram.EventSink.NodeMouseLeave += EventSink_NodeMouseLeave;
+            this.sqlDependencyDiagram.EventSink.NodeClick += EventSink_NodeClick;
 
             this.sqlDependencyDiagram.View.SelectionList.Clear();
         }
@@ -143,392 +146,28 @@ namespace DatabaseDiagram
             {
                 _errorService.LogAndDisplayErrorMessage(ex);
             }
-        }
-
-        /// <summary>
-        /// Make connection establishment between nodes
-        /// </summary>
-        private void ConnectNodes(DataTable Relationships, List<string> dependencyTables)
-        {
-            try
-            {
-                int tableCount = 0;
-
-                // loop dependencyTables and create each table
-                int pointLeft = 0; // over
-                int pointRight = 250; // down
-
-                foreach (string table in dependencyTables)
-                {
-                    // is this the fifth table in a row, if so, add to row but reset for next row of tables
-                    if (tableCount == 4)
-                    {
-                        pointLeft = 150; //over
-                        pointRight += 300; // down
-                        tableCount = 0; // rest for next row
-                    }
-                    else
-                    {
-                        tableCount++;
-                        if (IsCompact) pointLeft += 250; // over
-                        else pointLeft += 300; // extra width needed for extra column properties
-                    }
-
-                    // create table node on diagram
-                    sqlDependencyDiagram.Model.Nodes[table].EditStyle.AllowDelete = false;
-                    sqlDependencyDiagram.Model.Nodes[table].PinPoint = new PointF(pointLeft, pointRight);
-                }
-
-                foreach (DataRow row in Relationships.Rows)
-                {
-                    ConnectNodes(sqlDependencyDiagram.Model.Nodes[(string)row["ReferencedTableName"]], sqlDependencyDiagram.Model.Nodes[(string)row["ParentTableName"]], (string)row["RelationshipType"], (string)row["ReferencedColumnName"]);
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
-        /// <summary>
-        /// Initialize the Diagram from XML file
-        /// </summary>
-        protected void InitializeDiagramFromXMLData(string updatedXml, DataTable Relationships, List<string> dependencyTables, bool isCompact)
-        {
-            try
-            {
-                sqlDependencyDiagram.Model.Clear();
-                sqlDependencyDiagram.Model.BeginUpdate();
-                RoundRect rrect = new RoundRect(10, 10, 250, 100, MeasureUnits.Pixel);
-                rrect.TreatAsObstacle = true; //Enabling obstacle property for node
-                rrect.FillStyle.Color = Color.Transparent;
-                rrect.EditStyle.AllowSelect = false;
-                rrect.LineStyle.LineColor = Color.Gray;
-
-                Syncfusion.Windows.Forms.Diagram.Label lbl = new Syncfusion.Windows.Forms.Diagram.Label(rrect, "Table Relationship Ledgend");
-                lbl.Position = Position.TopLeft;
-                lbl.FontStyle.Bold = true;
-                lbl.FontStyle.Underline = true;
-                lbl.FontStyle.Family = "Segoe UI";
-                lbl.FontStyle.Size = 9;
-                rrect.Labels.Add(lbl);
-
-                Syncfusion.Windows.Forms.Diagram.Label lblOneToOne = new Syncfusion.Windows.Forms.Diagram.Label(rrect, ": One To One");
-                lblOneToOne.FontStyle.Family = "Segoe UI";
-                lblOneToOne.FontStyle.Size = 9;
-                lblOneToOne.OffsetX = 100;
-                lblOneToOne.OffsetY = 10;
-                rrect.Labels.Add(lblOneToOne);
-
-                Syncfusion.Windows.Forms.Diagram.Label lblOneToMany = new Syncfusion.Windows.Forms.Diagram.Label(rrect, ": One To Many");
-                lblOneToMany.FontStyle.Family = "Segoe UI";
-                lblOneToMany.FontStyle.Size = 9;
-                lblOneToMany.OffsetX = 100;
-                lblOneToMany.OffsetY = 40;
-                rrect.Labels.Add(lblOneToMany);
-
-                Syncfusion.Windows.Forms.Diagram.Label lblManyToMany = new Syncfusion.Windows.Forms.Diagram.Label(rrect, ": Many To Many");
-                lblManyToMany.FontStyle.Family = "Segoe UI";
-                lblManyToMany.FontStyle.Size = 9;
-                lblManyToMany.OffsetX = 100;
-                lblManyToMany.OffsetY = 70;
-                rrect.Labels.Add(lblManyToMany);
-
-                sqlDependencyDiagram.Model.AppendChild(rrect);
-                LineConnector oneToOne = new LineConnector(new PointF(20, 30), new PointF(110, 30));
-                oneToOne.EditStyle.AllowSelect = false;
-                oneToOne.TailDecorator.DecoratorShape = DecoratorShape.None;
-                oneToOne.HeadDecorator.DecoratorShape = DecoratorShape.None;
-                sqlDependencyDiagram.Model.AppendChild(oneToOne);
-
-                LineConnector oneToMany = new LineConnector(new PointF(20, 60), new PointF(110, 60));
-                oneToMany.EditStyle.AllowSelect = false;
-                oneToMany.TailDecorator.DecoratorShape = DecoratorShape.None;
-                oneToMany.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
-                sqlDependencyDiagram.Model.AppendChild(oneToMany);
-
-                LineConnector manyToMany = new LineConnector(new PointF(20, 90), new PointF(110, 90));
-                manyToMany.EditStyle.AllowSelect = false;
-                manyToMany.TailDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
-                manyToMany.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
-                sqlDependencyDiagram.Model.AppendChild(manyToMany);
-
-                // convert for downstream fnx's
-                ArrayList sortedlist = new ArrayList(this.ReadTableDataFromXMLFile(updatedXml).Values);
-
-                // Create diagram symbol nodes for each employee and initialize the diagram
-                this.CreateOrgDiagramFromList(sortedlist, isCompact);                
-                sortedlist.Clear();
-
-                //Make connection between nodes
-                ConnectNodes(Relationships, dependencyTables); // pass in array of tables and relationships
-                sqlDependencyDiagram.Model.EndUpdate();
-                sqlDependencyDiagram.View.SelectionList.Clear();
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
+        }        
 
         /// <summary>
         /// Generates the SubEmployee count
         /// </summary>
         /// <param name="dgm">Employee</param>
-        protected void IterUpdateSubEmployeeCount(CustomDiagramTable dgm)
-        {
-            try
-            {
-                dgm.RecSubTableCount = dgm.SubTables.Count;
-                foreach (CustomDiagramTable subempl in dgm.SubTables)
-                {
-                    this.IterUpdateSubEmployeeCount(subempl);
-                    dgm.RecSubTableCount += subempl.RecSubTableCount;
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
-        /// <summary>
-        /// Read data from the XML file
-        /// </summary>
-        /// <param name="updatedXml">XML file</param>
-        /// <returns>returns the table</returns>
-        protected Hashtable ReadTableDataFromXMLFile(string updatedXml)
-        {
-            Hashtable lstTables = new Hashtable();
-
-            // Use the XML DOM to read data from the DB tables XML data file
-            XmlDocument xmldoc = new XmlDocument();
-            try
-            {
-                xmldoc.LoadXml(updatedXml);
-
-                if (xmldoc.DocumentElement.HasChildNodes)
-                {
-                    XmlNodeList tableList = xmldoc.DocumentElement.ChildNodes;
-                    for (int i = 0; i < tableList.Count; i++)
-                    {
-                        // Create a class instance to represent each DB Table
-                        CustomDiagramTable dgmTable = new CustomDiagramTable();
-
-                        XmlNode tableNode = tableList[i];
-                        dgmTable.TableName = tableNode.Name;
-
-                        XmlNodeList tableDataList = tableNode.ChildNodes;
-                        IEnumerator tableData = tableDataList.GetEnumerator();
-                        tableData.Reset();
-
-                        while (tableData.MoveNext())
-                        {
-                            XmlNode dataElement = tableData.Current as XmlNode;
-
-                            switch (dataElement.Name)
-                            {
-                                case "PrimaryKey":
-                                    dgmTable.PrimaryKeyID.Add(dataElement.InnerText);
-                                    break;
-                                case "ForeignKey":
-                                    dgmTable.ForeignKeyID.Add(dataElement.InnerText);
-                                    break;
-                                case "TableId":
-                                    dgmTable.TableID = dataElement.InnerText;
-                                    break;
-                                default:
-                                    ColumnData columnData = new ColumnData() { CompactColumnName = dataElement.Name, NonCompactColumnName = dataElement.Name + dataElement.Attributes["ColumnDataType"].Value };
-                                    dgmTable.ColumnDatas.Add(columnData);
-
-                                    dgmTable.Coloumns.Add(dataElement.Name); // default name                                   
-                                    break;
-                            }
-                        }
-
-                        lstTables.Add(dgmTable.TableID, dgmTable);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-
-            return lstTables;
-        }
-
-        /// <summary>
-        /// Create diagram symbol nodes for each employee in the organization and add these symbols to the diagram
-        /// Create links between manager and sub-employees to depict the org structure
-        /// </summary>
-        /// <param name="aryTables"></param>
-        private void CreateOrgDiagramFromList(ArrayList aryTables, bool isCompact)
-        {
-            try
-            {
-                // Temporarily suspend the Diagram Model redrawing
-                this.sqlDependencyDiagram.Model.BeginUpdate();
-                this.sqlDependencyDiagram.Model.LineBridgingEnabled = true;
-
-                foreach (CustomDiagramTable table in aryTables)
-                {
-                    Group tableSymbol = InsertSymbolEmployee(table, isCompact);
-                    this.IterCreateEmployeeSymbol(table, tableSymbol, isCompact);
-                }
-
-                // ReEnable the Model redraw
-                this.sqlDependencyDiagram.Model.EndUpdate();
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
-        /// <summary>
-        /// Iterative sub-employee symbol node creation
-        /// </summary>
-        /// <param name="emply">Employees business object</param>
-        /// <param name="emplysymbol">Node</param>
-        private void IterCreateEmployeeSymbol(CustomDiagramTable emply, Group emplysymbol, bool isCompact)
-        {
-            try
-            {
-                foreach (CustomDiagramTable subemply in emply.SubTables)
-                {
-                    // Create a EmployeeSymbol for each of the sub-employees of the particular employee //Waterfall, Horizontal
-                    Group subemplysymbol = InsertSymbolEmployee(subemply, isCompact);
-                    this.IterCreateEmployeeSymbol(subemply, subemplysymbol, isCompact);
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
-        /// <summary>
-        /// Insert Node
-        /// </summary>
-        /// <param name="dgmTable">Employee object</param>
-        /// <returns>returns the node</returns>        
-        private Group InsertSymbolEmployee(CustomDiagramTable dgmTable, bool isCompact)
-        {
-            DataSymbol Symbol = null;
-
-            try
-            {
-                Symbol = new DataSymbol(dgmTable.Coloumns, dgmTable.TableName, dgmTable.PrimaryKeyID, dgmTable.ForeignKeyID, dgmTable.ColumnDatas, isCompact, selectedTable.TABLE_NAME);
-                this.sqlDependencyDiagram.Model.AppendChild(Symbol);
-                return Symbol;
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-                return Symbol;
-            }
-        }
-
-        /// <summary>
-        /// Connect Nodes with connectors
-        /// </summary>
-        /// <param name="refTableSymbol">Parent</param>
-        /// <param name="parentSymbol">Child</param>
-        /// <param name="relation">relationship</param>
-        private void ConnectNodes(Node refTableSymbol, Node parentSymbol, string relation, string referencedColumnName)
-        {
-            try
-            {
-                if (refTableSymbol.CentralPort != null && parentSymbol.CentralPort != null)
-                {
-                    // add relationship name label
-                    Syncfusion.Windows.Forms.Diagram.Label label = new Syncfusion.Windows.Forms.Diagram.Label();
-                    label.Text = referencedColumnName.Length > 20 ? referencedColumnName.Substring(0, 20) : referencedColumnName; // limit label size
-                    label.FontStyle.Family = "Arial";
-                    label.FontColorStyle.Color = Color.Red;
-                    label.VerticalAlignment = StringAlignment.Center;
-                    label.UpdatePosition = true;
-                    label.Position = Position.Center;
-                    label.BackgroundStyle.Color = Color.Transparent;
-                    label.Orientation = LabelOrientation.Horizontal;
-
-                    // check if self referencing join
-                    if (refTableSymbol.Name == parentSymbol.Name)
-                    {
-                        //enabling line routing for model
-                        this.sqlDependencyDiagram.Model.LineRoutingEnabled = true;
-
-                        refTableSymbol.EnableCentralPort = true;
-                        refTableSymbol.DrawPorts = false;                        
-
-                        //creating connection point ports.
-                        Syncfusion.Windows.Forms.Diagram.ConnectionPoint cp = new Syncfusion.Windows.Forms.Diagram.ConnectionPoint();
-                        Syncfusion.Windows.Forms.Diagram.ConnectionPoint cp1 = new Syncfusion.Windows.Forms.Diagram.ConnectionPoint();
-
-                        //Port position
-                        cp.Position = Syncfusion.Windows.Forms.Diagram.Position.TopCenter;
-                        cp1.Position = Syncfusion.Windows.Forms.Diagram.Position.MiddleRight;
-
-                        //Adding port to the node
-                        refTableSymbol.Ports.Add(cp);
-                        refTableSymbol.Ports.Add(cp1);
-
-                        //Creating connector
-                        Syncfusion.Windows.Forms.Diagram.OrgLineConnector ortholink = new Syncfusion.Windows.Forms.Diagram.OrgLineConnector(new PointF(0, 0), new PointF(0, 0));
-
-                        ortholink.EditStyle.AllowDelete = false;
-                        ortholink.LineStyle.DashStyle = DashStyle.Solid;
-                        ortholink.LineStyle.LineWidth = 1f;
-                        ortholink.LineStyle.LineColor = Color.Black;
-
-                        // tail connector
-                        if (relation == TextStrings.OneToMany || relation == TextStrings.OneToOne) ortholink.TailDecorator.DecoratorShape = DecoratorShape.None;
-                        else ortholink.TailDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
-
-                        // head connector
-                        if (relation == TextStrings.OneToOne) ortholink.HeadDecorator.DecoratorShape = DecoratorShape.None;
-                        else ortholink.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
-
-                        //specify head and tail port point to the connector
-                        refTableSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
-                        refTableSymbol.Ports[1].TryConnect(ortholink.TailEndPoint);
-
-                        // ortholink.Labels.Add(label);  // add ref table column to connector
-
-                        this.sqlDependencyDiagram.Model.AppendChild(ortholink);
-                    }
-                    else
-                    {
-                        LineConnector ortholink = new LineConnector(PointF.Empty, new PointF(0, 1));
-                        ortholink.EditStyle.AllowDelete = false;
-                        ortholink.LineStyle.DashStyle = DashStyle.Solid;                        
-
-                        ortholink.LineStyle.LineWidth = 1f;
-                        ortholink.LineStyle.LineColor = Color.Black;
-
-                        if (relation == TextStrings.OneToMany || relation == TextStrings.OneToOne) ortholink.TailDecorator.DecoratorShape = DecoratorShape.None;
-                        else ortholink.TailDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
-
-                        if (relation == TextStrings.OneToOne) ortholink.HeadDecorator.DecoratorShape = DecoratorShape.None;
-                        else ortholink.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
-
-                        this.sqlDependencyDiagram.Model.AppendChild(ortholink);
-
-                        refTableSymbol.CentralPort.TryConnect(ortholink.TailEndPoint);
-                        parentSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
-
-                        ortholink.Labels.Add(label);  // add ref table column to connector
-                    }
-                }
-
-                this.sqlDependencyDiagram.Controller.SendToBack();
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
+        //protected void IterUpdateSubEmployeeCount(CustomDiagramTable dgm)
+        //{
+        //    try
+        //    {
+        //        dgm.RecSubTableCount = dgm.SubTables.Count;
+        //        foreach (CustomDiagramTable subempl in dgm.SubTables)
+        //        {
+        //            this.IterUpdateSubEmployeeCount(subempl);
+        //            dgm.RecSubTableCount += subempl.RecSubTableCount;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorService.LogAndDisplayErrorMessage(ex);
+        //    }
+        //}        
 
         #endregion
 
@@ -544,7 +183,7 @@ namespace DatabaseDiagram
             this.sqlDependencyDiagram.Controller.ActivateTool("SelectTool");
         }
 
-        void EventSink_NodeClick(NodeMouseEventArgs evtArgs)
+        private void EventSink_NodeClick(NodeMouseEventArgs evtArgs)
         {
             try
             {
@@ -683,7 +322,6 @@ namespace DatabaseDiagram
                 _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
-        #endregion        
 
         private void DiagramGenerator_Load(object sender, EventArgs e)
         {
@@ -718,7 +356,7 @@ namespace DatabaseDiagram
         {
             try
             {
-                Cursor.Current = Cursors.WaitCursor;               
+                Cursor.Current = Cursors.WaitCursor;
 
                 this.viewSplitToolStripSplitButton.Enabled = false;
                 DatabaseMetaData selectedTable = (DatabaseMetaData)this.cboTable.ComboBox.SelectedValue;
@@ -793,7 +431,14 @@ namespace DatabaseDiagram
 
             Cursor.Current = Cursors.Default;
         }
+        #endregion
 
+        #region Custom Diagram Methods
+
+        /// <summary>
+        /// Generates the diagram.
+        /// </summary>
+        /// <param name="isCompact">if set to <c>true</c> [is compact].</param>
         private void GenerateDiagram(bool isCompact = true)
         {
             try
@@ -820,10 +465,6 @@ namespace DatabaseDiagram
                 InitializeDiagramFromXMLData(updatedXml, Relationships, dependencyTables, isCompact);
 
                 sqlDependencyDiagram.View.SelectionList.Clear();
-
-                //// enable buttons
-                //this.AreToolStripButtonsEnabled();
-                                                         
             }
             catch (Exception ex)
             {
@@ -831,6 +472,372 @@ namespace DatabaseDiagram
             }
             finally { Cursor.Current = Cursors.Default; }
         }
+
+        /// <summary>
+        /// Initialize the Diagram from XML file
+        /// </summary>
+        protected void InitializeDiagramFromXMLData(string updatedXml, DataTable Relationships, List<string> dependencyTables, bool isCompact)
+        {
+            try
+            {
+                sqlDependencyDiagram.Model.Clear();
+                sqlDependencyDiagram.Model.BeginUpdate();
+                RoundRect rrect = new RoundRect(10, 10, 250, 100, MeasureUnits.Pixel);
+                rrect.TreatAsObstacle = true; //Enabling obstacle property for node
+                rrect.FillStyle.Color = Color.Transparent;
+                rrect.EditStyle.AllowSelect = false;
+                rrect.LineStyle.LineColor = Color.Gray;
+
+                Syncfusion.Windows.Forms.Diagram.Label lbl = new Syncfusion.Windows.Forms.Diagram.Label(rrect, "Table Relationship Ledgend");
+                lbl.Position = Position.TopLeft;
+                lbl.FontStyle.Bold = true;
+                lbl.FontStyle.Underline = true;
+                lbl.FontStyle.Family = "Segoe UI";
+                lbl.FontStyle.Size = 9;
+                rrect.Labels.Add(lbl);
+
+                Syncfusion.Windows.Forms.Diagram.Label lblOneToOne = new Syncfusion.Windows.Forms.Diagram.Label(rrect, ": One To One");
+                lblOneToOne.FontStyle.Family = "Segoe UI";
+                lblOneToOne.FontStyle.Size = 9;
+                lblOneToOne.OffsetX = 100;
+                lblOneToOne.OffsetY = 10;
+                rrect.Labels.Add(lblOneToOne);
+
+                Syncfusion.Windows.Forms.Diagram.Label lblOneToMany = new Syncfusion.Windows.Forms.Diagram.Label(rrect, ": One To Many");
+                lblOneToMany.FontStyle.Family = "Segoe UI";
+                lblOneToMany.FontStyle.Size = 9;
+                lblOneToMany.OffsetX = 100;
+                lblOneToMany.OffsetY = 40;
+                rrect.Labels.Add(lblOneToMany);
+
+                Syncfusion.Windows.Forms.Diagram.Label lblManyToMany = new Syncfusion.Windows.Forms.Diagram.Label(rrect, ": Many To Many");
+                lblManyToMany.FontStyle.Family = "Segoe UI";
+                lblManyToMany.FontStyle.Size = 9;
+                lblManyToMany.OffsetX = 100;
+                lblManyToMany.OffsetY = 70;
+                rrect.Labels.Add(lblManyToMany);
+
+                sqlDependencyDiagram.Model.AppendChild(rrect);
+                LineConnector oneToOne = new LineConnector(new PointF(20, 30), new PointF(110, 30));
+                oneToOne.EditStyle.AllowSelect = false;
+                oneToOne.TailDecorator.DecoratorShape = DecoratorShape.None;
+                oneToOne.HeadDecorator.DecoratorShape = DecoratorShape.None;
+                sqlDependencyDiagram.Model.AppendChild(oneToOne);
+
+                LineConnector oneToMany = new LineConnector(new PointF(20, 60), new PointF(110, 60));
+                oneToMany.EditStyle.AllowSelect = false;
+                oneToMany.TailDecorator.DecoratorShape = DecoratorShape.None;
+                oneToMany.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
+                sqlDependencyDiagram.Model.AppendChild(oneToMany);
+
+                LineConnector manyToMany = new LineConnector(new PointF(20, 90), new PointF(110, 90));
+                manyToMany.EditStyle.AllowSelect = false;
+                manyToMany.TailDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
+                manyToMany.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
+                sqlDependencyDiagram.Model.AppendChild(manyToMany);
+
+                // convert for downstream fnx's
+                ArrayList sortedlist = new ArrayList(this.ReadTableDataFromXMLFile(updatedXml).Values);
+
+                // Create diagram symbol nodes for each employee and initialize the diagram
+                this.CreateOrgDiagramFromList(sortedlist, isCompact);
+                sortedlist.Clear();
+
+                //Make connection between nodes
+                ConnectNodes(Relationships, dependencyTables); // pass in array of tables and relationships
+                sqlDependencyDiagram.Model.EndUpdate();
+                sqlDependencyDiagram.View.SelectionList.Clear();
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+        }
+
+        /// <summary>
+        /// Create diagram symbol nodes for each employee in the organization and add these symbols to the diagram
+        /// Create links between manager and sub-employees to depict the org structure
+        /// </summary>
+        /// <param name="aryTables"></param>
+        private void CreateOrgDiagramFromList(ArrayList aryTables, bool isCompact)
+        {
+            try
+            {
+                // Temporarily suspend the Diagram Model redrawing
+                this.sqlDependencyDiagram.Model.BeginUpdate();
+                this.sqlDependencyDiagram.Model.LineBridgingEnabled = true;
+
+                foreach (CustomDiagramTable table in aryTables)
+                {
+                    Group tableSymbol = InsertSymbolTable(table, isCompact);
+                    this.IterateCreateTableSymbol(table, tableSymbol, isCompact);
+                }
+
+                // ReEnable the Model redraw
+                this.sqlDependencyDiagram.Model.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+        }
+
+        /// <summary>
+        /// Make connection establishment between nodes
+        /// </summary>
+        private void ConnectNodes(DataTable Relationships, List<string> dependencyTables)
+        {
+            try
+            {
+                int tableCount = 0;
+
+                // loop dependencyTables and create each table
+                int pointLeft = 0; // over
+                int pointRight = 250; // down
+
+                foreach (string table in dependencyTables)
+                {
+                    // is this the fifth table in a row, if so, add to row but reset for next row of tables
+                    if (tableCount == 4)
+                    {
+                        pointLeft = 150; //over
+                        pointRight += 300; // down
+                        tableCount = 0; // rest for next row
+                    }
+                    else
+                    {
+                        tableCount++;
+                        if (IsCompact) pointLeft += 250; // over
+                        else pointLeft += 300; // extra width needed for extra column properties
+                    }
+
+                    // create table node on diagram
+                    sqlDependencyDiagram.Model.Nodes[table].EditStyle.AllowDelete = false;
+                    sqlDependencyDiagram.Model.Nodes[table].PinPoint = new PointF(pointLeft, pointRight);
+                }
+
+                foreach (DataRow row in Relationships.Rows)
+                {
+                    ConnectNodes(sqlDependencyDiagram.Model.Nodes[(string)row["ReferencedTableName"]], sqlDependencyDiagram.Model.Nodes[(string)row["ParentTableName"]], (string)row["RelationshipType"], (string)row["ReferencedColumnName"]);
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+        }
+
+        /// <summary>
+        /// Read data from the XML file
+        /// </summary>
+        /// <param name="updatedXml">XML file</param>
+        /// <returns>returns the table</returns>
+        protected Hashtable ReadTableDataFromXMLFile(string updatedXml)
+        {
+            Hashtable lstTables = new Hashtable();
+
+            // Use the XML DOM to read data from the DB tables XML data file
+            XmlDocument xmldoc = new XmlDocument();
+            try
+            {
+                xmldoc.LoadXml(updatedXml);
+
+                if (xmldoc.DocumentElement.HasChildNodes)
+                {
+                    XmlNodeList tableList = xmldoc.DocumentElement.ChildNodes;
+                    for (int i = 0; i < tableList.Count; i++)
+                    {
+                        // Create a class instance to represent each DB Table
+                        CustomDiagramTable dgmTable = new CustomDiagramTable();
+
+                        XmlNode tableNode = tableList[i];
+                        dgmTable.TableName = tableNode.Name;
+
+                        XmlNodeList tableDataList = tableNode.ChildNodes;
+                        IEnumerator tableData = tableDataList.GetEnumerator();
+                        tableData.Reset();
+
+                        while (tableData.MoveNext())
+                        {
+                            XmlNode dataElement = tableData.Current as XmlNode;
+
+                            switch (dataElement.Name)
+                            {
+                                case "PrimaryKey":
+                                    dgmTable.PrimaryKeyID.Add(dataElement.InnerText);
+                                    break;
+                                case "ForeignKey":
+                                    dgmTable.ForeignKeyID.Add(dataElement.InnerText);
+                                    break;
+                                case "TableId":
+                                    dgmTable.TableID = dataElement.InnerText;
+                                    break;
+                                default:
+                                    ColumnData columnData = new ColumnData() { CompactColumnName = dataElement.Name, NonCompactColumnName = dataElement.Name + dataElement.Attributes["ColumnDataType"].Value };
+                                    dgmTable.ColumnDatas.Add(columnData);
+
+                                    dgmTable.Coloumns.Add(dataElement.Name); // default name                                   
+                                    break;
+                            }
+                        }
+
+                        lstTables.Add(dgmTable.TableID, dgmTable);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+
+            return lstTables;
+        }
+
+        /// <summary>
+        /// Iterative sub-employee symbol node creation
+        /// </summary>
+        /// <param name="emply">Employees business object</param>
+        /// <param name="emplysymbol">Node</param>
+        private void IterateCreateTableSymbol(CustomDiagramTable emply, Group emplysymbol, bool isCompact)
+        {
+            try
+            {
+                foreach (CustomDiagramTable subemply in emply.SubTables)
+                {
+                    // Create a EmployeeSymbol for each of the sub-employees of the particular employee //Waterfall, Horizontal
+                    Group subemplysymbol = InsertSymbolTable(subemply, isCompact);
+                    this.IterateCreateTableSymbol(subemply, subemplysymbol, isCompact);
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+        }
+
+        /// <summary>
+        /// Insert Node
+        /// </summary>
+        /// <param name="dgmTable">Employee object</param>
+        /// <returns>returns the node</returns>        
+        private Group InsertSymbolTable(CustomDiagramTable dgmTable, bool isCompact)
+        {
+            DataSymbol Symbol = null;
+
+            try
+            {
+                Symbol = new DataSymbol(dgmTable.Coloumns, dgmTable.TableName, dgmTable.PrimaryKeyID, dgmTable.ForeignKeyID, dgmTable.ColumnDatas, isCompact, selectedTable.TABLE_NAME);
+                this.sqlDependencyDiagram.Model.AppendChild(Symbol);
+                return Symbol;
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+                return Symbol;
+            }
+        }
+
+        /// <summary>
+        /// Connect Nodes with connectors
+        /// </summary>
+        /// <param name="refTableSymbol">Parent</param>
+        /// <param name="parentSymbol">Child</param>
+        /// <param name="relation">relationship</param>
+        private void ConnectNodes(Node refTableSymbol, Node parentSymbol, string relation, string referencedColumnName)
+        {
+            try
+            {
+                if (refTableSymbol.CentralPort != null && parentSymbol.CentralPort != null)
+                {
+                    // add relationship name label
+                    Syncfusion.Windows.Forms.Diagram.Label label = new Syncfusion.Windows.Forms.Diagram.Label();
+                    label.Text = referencedColumnName.Length > 20 ? referencedColumnName.Substring(0, 20) : referencedColumnName; // limit label size
+                    label.FontStyle.Family = "Arial";
+                    label.FontColorStyle.Color = Color.Red;
+                    label.VerticalAlignment = StringAlignment.Center;
+                    label.UpdatePosition = true;
+                    label.Position = Position.Center;
+                    label.BackgroundStyle.Color = Color.Transparent;
+                    label.Orientation = LabelOrientation.Horizontal;
+
+                    // check if self referencing join
+                    if (refTableSymbol.Name == parentSymbol.Name)
+                    {
+                        //enabling line routing for model
+                        this.sqlDependencyDiagram.Model.LineRoutingEnabled = true;
+
+                        refTableSymbol.EnableCentralPort = true;
+                        refTableSymbol.DrawPorts = false;
+
+                        //creating connection point ports.
+                        Syncfusion.Windows.Forms.Diagram.ConnectionPoint cp = new Syncfusion.Windows.Forms.Diagram.ConnectionPoint();
+                        Syncfusion.Windows.Forms.Diagram.ConnectionPoint cp1 = new Syncfusion.Windows.Forms.Diagram.ConnectionPoint();
+
+                        //Port position
+                        cp.Position = Syncfusion.Windows.Forms.Diagram.Position.TopCenter;
+                        cp1.Position = Syncfusion.Windows.Forms.Diagram.Position.MiddleRight;
+
+                        //Adding port to the node
+                        refTableSymbol.Ports.Add(cp);
+                        refTableSymbol.Ports.Add(cp1);
+
+                        //Creating connector
+                        Syncfusion.Windows.Forms.Diagram.OrgLineConnector ortholink = new Syncfusion.Windows.Forms.Diagram.OrgLineConnector(new PointF(0, 0), new PointF(0, 0));
+
+                        ortholink.EditStyle.AllowDelete = false;
+                        ortholink.LineStyle.DashStyle = DashStyle.Solid;
+                        ortholink.LineStyle.LineWidth = 1f;
+                        ortholink.LineStyle.LineColor = Color.Black;
+
+                        // tail connector
+                        if (relation == TextStrings.OneToMany || relation == TextStrings.OneToOne) ortholink.TailDecorator.DecoratorShape = DecoratorShape.None;
+                        else ortholink.TailDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
+
+                        // head connector
+                        if (relation == TextStrings.OneToOne) ortholink.HeadDecorator.DecoratorShape = DecoratorShape.None;
+                        else ortholink.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
+
+                        //specify head and tail port point to the connector
+                        refTableSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
+                        refTableSymbol.Ports[1].TryConnect(ortholink.TailEndPoint);
+
+                        // ortholink.Labels.Add(label);  // add ref table column to connector
+
+                        this.sqlDependencyDiagram.Model.AppendChild(ortholink);
+                    }
+                    else
+                    {
+                        LineConnector ortholink = new LineConnector(PointF.Empty, new PointF(0, 1));
+                        ortholink.EditStyle.AllowDelete = false;
+                        ortholink.LineStyle.DashStyle = DashStyle.Solid;
+
+                        ortholink.LineStyle.LineWidth = 1f;
+                        ortholink.LineStyle.LineColor = Color.Black;
+
+                        if (relation == TextStrings.OneToMany || relation == TextStrings.OneToOne) ortholink.TailDecorator.DecoratorShape = DecoratorShape.None;
+                        else ortholink.TailDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
+
+                        if (relation == TextStrings.OneToOne) ortholink.HeadDecorator.DecoratorShape = DecoratorShape.None;
+                        else ortholink.HeadDecorator.DecoratorShape = DecoratorShape.ReverseArrow;
+
+                        this.sqlDependencyDiagram.Model.AppendChild(ortholink);
+
+                        refTableSymbol.CentralPort.TryConnect(ortholink.TailEndPoint);
+                        parentSymbol.CentralPort.TryConnect(ortholink.HeadEndPoint);
+
+                        ortholink.Labels.Add(label);  // add ref table column to connector
+                    }
+                }
+
+                this.sqlDependencyDiagram.Controller.SendToBack();
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+        }
+
+        #endregion
 
         #region Delegate Helper Methods
 
