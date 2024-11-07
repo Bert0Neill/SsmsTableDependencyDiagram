@@ -1,0 +1,95 @@
+calling AreToolStripButtonsEnabled() in winform from command
+-------------------------------------------------------------
+public class DatabaseSelectionChangedCommand : RelayCommand
+{
+    private readonly ISqlService _sqlService;
+    private readonly IErrorService _errorService;
+    private readonly SharedData _sharedData;
+    private readonly ComboBox cboTable;
+    private readonly SqlDependencyDiagram sqlDependencyDiagram;
+    private readonly IToolStripButtonEnabler _toolStripButtonEnabler;
+
+    public DatabaseSelectionChangedCommand(ISqlService sqlService, IErrorService errorService, SharedData sharedData, ComboBox cboTable, SqlDependencyDiagram sqlDependencyDiagram, IToolStripButtonEnabler toolStripButtonEnabler)
+    {
+        _sqlService = sqlService;
+        _errorService = errorService;
+        _sharedData = sharedData;
+        this.cboTable = cboTable;
+        this.sqlDependencyDiagram = sqlDependencyDiagram;
+        _toolStripButtonEnabler = toolStripButtonEnabler;
+    }
+
+    public override void Execute(object parameter)
+    {
+        try
+        {
+            Cursor.Current = Cursors.WaitCursor;
+
+            List<DatabaseMetaData> initialData;
+
+            // disable event as new data will be bound and trigger this event & disable any user interaction until tables retrieved
+            cboTable.SelectedIndexChanged -= new System.EventHandler(cboTable_SelectedIndexChanged);
+            cboTable.Enabled = false;
+
+            // clear any existing diagram
+            sqlDependencyDiagram.BeginUpdate();
+            sqlDependencyDiagram.Model.Clear();
+            sqlDependencyDiagram.View.SelectionList.Clear();
+            sqlDependencyDiagram.EndUpdate();
+
+            _toolStripButtonEnabler.AreToolStripButtonsEnabled();
+
+            string selectedDatabase = parameter.ToString();
+            if (selectedDatabase == TextStrings.PleaseSelectDatabase) return;
+
+            initialData = _sqlService.RetrieveDatabaseMetaData(_sharedData.SqlOlapConnectionInfoBase.ConnectionString, selectedDatabase);
+            initialData.Insert(0, new DatabaseMetaData() { TABLE_NAME = TextStrings.PleaseSelectTable });
+            if (initialData.Count > 1)
+            {
+                var distinctTables = initialData.GroupBy(p => p.TABLE_NAME).Select(g => g.First()).ToList();
+
+                cboTable.DataSource = null;
+                cboTable.DataSource = distinctTables;
+                cboTable.DisplayMember = TextStrings.TABLE_NAME;
+                cboTable.Enabled = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorService.LogAndDisplayErrorMessage(ex);
+        }
+        finally
+        {
+            // enable combo and event
+            cboTable.SelectedIndexChanged += new System.EventHandler(cboTable_SelectedIndexChanged);
+            cboTable.Enabled = true;
+            Cursor.Current = Cursors.Default;
+        }
+    }
+}
+
+
+Winform Inherits
+-----------------
+public partial class MyForm : Form, IToolStripButtonEnabler
+{
+    public MyForm()
+    {
+        InitializeComponent();
+
+        var command = new DatabaseSelectionChangedCommand(_sqlService, _errorService, _sharedData, cboTable, sqlDependencyDiagram, this);
+        cboDatabase.SelectedIndexChanged += (s, e) => command.Execute(cboDatabase.ComboBox.SelectedValue);
+    }
+
+    public void AreToolStripButtonsEnabled()
+    {
+        // Your implementation here
+    }
+}
+
+Interface
+-----------
+public interface IToolStripButtonEnabler
+{
+    void AreToolStripButtonsEnabled();
+}
