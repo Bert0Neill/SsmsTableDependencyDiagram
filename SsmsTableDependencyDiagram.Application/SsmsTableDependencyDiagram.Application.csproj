@@ -327,6 +327,7 @@
     <Compile Include="Commands\RelayCommand\RelayCommand.cs" />
     <Compile Include="Commands\UpdateToolStripButtonsCommand.cs" />
     <Compile Include="Commands\ExportDiagramCommandHandler.cs" />
+    <Compile Include="Interfaces\IToolStripButtonEnabler.cs" />
     <Compile Include="Interfaces\ICommand.cs" />
     <Compile Include="Interfaces\IConvertService.cs" />
     <Compile Include="Interfaces\IErrorService.cs" />

@@ -25,7 +25,7 @@ using static SsmsTableDependencyDiagram.Domain.Models.CustomDiagramTable;
 
 namespace DatabaseDiagram
 {
-    public partial class DiagramGenerator : Form
+    public partial class DiagramGenerator : Form, IToolStripButtonEnabler
     {
         #region Members
         private bool IsCompact;
@@ -83,13 +83,8 @@ namespace DatabaseDiagram
                 this.jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
                 this.gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
 
-                _databaseCommandHandler = new DatabaseComboCommandHandler(_sqlService, _errorService, cboDatabase, cboTable, sqlDependencyDiagram);
-
-                //cboDatabase.SelectedIndexChanged += (s, e) =>
-                //{
-                //    if (databaseCommandHandler.DatabaseSelectionCommand.CanExecute(null))
-                //        databaseCommandHandler.DatabaseSelectionCommand.Execute(_sharedData);
-                //};
+                _databaseCommandHandler = new DatabaseComboCommandHandler(_sqlService, _errorService, _sharedData, cboTable, sqlDependencyDiagram, this, cboTable_SelectedIndexChanged);
+                cboDatabase.SelectedIndexChanged += (s, e) => _databaseCommandHandler.Execute(cboDatabase.ComboBox.SelectedValue);
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -688,24 +683,7 @@ namespace DatabaseDiagram
                 _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
-        #endregion
-
-        #region Helper Methods
-
-        private void AreToolStripButtonsEnabled()
-        {
-            try
-            {
-                // set the status depending on the diagram
-                printToolStripButton.Enabled = exportToolStripButton.Enabled = saveToolStripButton.Enabled = _exportCommandHandler.ExportCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
-        #endregion
+        #endregion        
 
         private void DiagramGenerator_Load(object sender, EventArgs e)
         {
@@ -756,39 +734,39 @@ namespace DatabaseDiagram
             finally { Cursor.Current = Cursors.Default; }
         }
 
-        private void cboDatabase_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                Cursor.Current = Cursors.WaitCursor;
+        //private void cboDatabase_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        Cursor.Current = Cursors.WaitCursor;
 
-                // disable event as new data will be bound and trigger this event & disable any user interaction until tables retrieved
-                this.cboTable.SelectedIndexChanged -= new System.EventHandler(this.cboTable_SelectedIndexChanged);
-                this.cboTable.Enabled = false;
+        //        // disable event as new data will be bound and trigger this event & disable any user interaction until tables retrieved
+        //        this.cboTable.SelectedIndexChanged -= new System.EventHandler(this.cboTable_SelectedIndexChanged);
+        //        this.cboTable.Enabled = false;
 
-                // clear any existing diagram
-                sqlDependencyDiagram.BeginUpdate();
-                sqlDependencyDiagram.Model.Clear();
-                sqlDependencyDiagram.View.SelectionList.Clear();
-                sqlDependencyDiagram.EndUpdate();
+        //        // clear any existing diagram
+        //        sqlDependencyDiagram.BeginUpdate();
+        //        sqlDependencyDiagram.Model.Clear();
+        //        sqlDependencyDiagram.View.SelectionList.Clear();
+        //        sqlDependencyDiagram.EndUpdate();
 
-                AreToolStripButtonsEnabled(); // disable appropiate buttons
+        //        AreToolStripButtonsEnabled(); // disable appropiate buttons
 
-                _databaseCommandHandler.DatabaseSelectionCommand.Execute(_sharedData);
+        //        _databaseCommandHandler.DatabaseSelectionCommand.Execute(_sharedData);
 
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-            finally 
-            {
-                // enable combo and event
-                this.cboTable.SelectedIndexChanged += new System.EventHandler(this.cboTable_SelectedIndexChanged);
-                this.cboTable.Enabled = true;
-                Cursor.Current = Cursors.Default;
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorService.LogAndDisplayErrorMessage(ex);
+        //    }
+        //    finally 
+        //    {
+        //        // enable combo and event
+        //        this.cboTable.SelectedIndexChanged += new System.EventHandler(this.cboTable_SelectedIndexChanged);
+        //        this.cboTable.Enabled = true;
+        //        Cursor.Current = Cursors.Default;
+        //    }
+        //}
 
         private void compactViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -843,8 +821,8 @@ namespace DatabaseDiagram
 
                 sqlDependencyDiagram.View.SelectionList.Clear();
 
-                // enable buttons
-                this.AreToolStripButtonsEnabled();
+                //// enable buttons
+                //this.AreToolStripButtonsEnabled();
                                                          
             }
             catch (Exception ex)
@@ -853,5 +831,22 @@ namespace DatabaseDiagram
             }
             finally { Cursor.Current = Cursors.Default; }
         }
+
+        #region Delegate Helper Methods
+
+        public void AreToolStripButtonsEnabled()
+        {
+            try
+            {
+                // set the status depending on the diagram
+                printToolStripButton.Enabled = exportToolStripButton.Enabled = saveToolStripButton.Enabled = _exportCommandHandler.ExportCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+        }
+
+        #endregion
     }
 }
