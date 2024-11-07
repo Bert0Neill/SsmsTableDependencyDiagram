@@ -939,7 +939,6 @@ namespace DatabaseDiagram
 
                 // enable buttons
                 this.AreToolStripButtonsEnabled();
-                                                     //                 
             }
             catch (Exception ex)
             {
