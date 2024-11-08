@@ -9,6 +9,7 @@ using SsmsTableDependencyDiagram.Application.Commands;
 using SsmsTableDependencyDiagram.Application.Interfaces;
 using SsmsTableDependencyDiagram.Domain.Models;
 using SsmsTableDependencyDiagram.Domain.Resources;
+using SsmsTableDependencyDiagram.Infrastructure.Services;
 using Syncfusion.Windows.Forms.Diagram;
 using Syncfusion.Windows.Forms.Diagram.Controls;
 using System;
@@ -41,10 +42,8 @@ namespace DatabaseDiagram
         #endregion
 
         #region Commands
-        private UpdateToolStripButtonsCommand _updateToolStripButtonsCommand;
-
         private ExportDiagramCommandHandler _exportCommandHandler; // export diagram
-        private PrintDiagramCommandHandler _printCommandHandler; // export diagram
+        private PrintDiagramCommandHandler _printCommandHandler; // print diagram
         private DatabaseComboCommandHandler _databaseCommandHandler; // database combobox
         private TableComboCommandHandler _tableComboCommandHandler; // table combobox
 
@@ -73,23 +72,25 @@ namespace DatabaseDiagram
                 
                 _sharedData = sharedData;
 
-              
-                // binding command to print event
+                // bind print button to command handler
                 _printCommandHandler = new PrintDiagramCommandHandler(_errorService);
                 this.printToolStripButton.Click += (s, e) => _printCommandHandler.PrintCommand.Execute(new Tuple<Diagram>(sqlDependencyDiagram));
 
-                // binding command to export button events
+                // bind buttons to command handler
                 _exportCommandHandler = new ExportDiagramCommandHandler(_errorService);                
                 this.pngToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
                 this.jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
                 this.gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
 
-                // bind command to database dropdown
+                // bind database combo to command handler
                 _databaseCommandHandler = new DatabaseComboCommandHandler(_sqlService, _errorService, _sharedData, cboTable, sqlDependencyDiagram, this);
                 cboDatabase.SelectedIndexChanged += (s, e) => _databaseCommandHandler.Execute(cboDatabase.ComboBox.SelectedValue);
 
+                // bind table combo to command handler
                 _tableComboCommandHandler = new TableComboCommandHandler(this.viewSplitToolStripSplitButton, _errorService);
                 cboTable.SelectedIndexChanged += (s, e) => _tableComboCommandHandler.Execute(this.cboTable.ComboBox.SelectedValue);
+
+               
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -150,27 +151,6 @@ namespace DatabaseDiagram
                 _errorService.LogAndDisplayErrorMessage(ex);
             }
         }        
-
-        /// <summary>
-        /// Generates the SubEmployee count
-        /// </summary>
-        /// <param name="dgm">Employee</param>
-        //protected void IterUpdateSubEmployeeCount(CustomDiagramTable dgm)
-        //{
-        //    try
-        //    {
-        //        dgm.RecSubTableCount = dgm.SubTables.Count;
-        //        foreach (CustomDiagramTable subempl in dgm.SubTables)
-        //        {
-        //            this.IterUpdateSubEmployeeCount(subempl);
-        //            dgm.RecSubTableCount += subempl.RecSubTableCount;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _errorService.LogAndDisplayErrorMessage(ex);
-        //    }
-        //}        
 
         #endregion
 
@@ -245,87 +225,6 @@ namespace DatabaseDiagram
             }
         }
 
-        private void saveAsToolStripButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                saveFileDialog1.Filter = @"EDD file(*.edd)|*.edd|XML file(*.xml)|*.xml|All files|*.*";
-                saveFileDialog1.Title = "Save File As:";
-                saveFileDialog1.FileName = "Diagram";
-
-                if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    switch (saveFileDialog1.FilterIndex)
-                    {
-                        case 1:
-                            sqlDependencyDiagram.SaveBinary(saveFileDialog1.FileName);
-                            break;
-                        default:
-                            sqlDependencyDiagram.SaveBinary(saveFileDialog1.FileName);
-                            break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
-        private void zoomInToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            try
-            {
-                sqlDependencyDiagram.View.ZoomIn();
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
-        private void zoomOutToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            try
-            {
-                sqlDependencyDiagram.View.ZoomOut();
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
-        private void resetToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            try
-            {
-                sqlDependencyDiagram.View.ZoomToActual();
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }        
-
-        private void openStripButton_Click(object sender, EventArgs e)
-        {
-            try
-            {                
-                this.openFileDialog1.Filter = "EDD file(*.edd)|*.edd";
-
-                if (this.openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    this.sqlDependencyDiagram.LoadBinary(this.openFileDialog1.FileName);
-                    this.sqlDependencyDiagram.Refresh();
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
         private void DiagramGenerator_Load(object sender, EventArgs e)
         {
             try
@@ -354,60 +253,6 @@ namespace DatabaseDiagram
             }
             finally { Cursor.Current = Cursors.Default; }
         }
-
-        //private void cboTable_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        Cursor.Current = Cursors.WaitCursor;
-
-        //        this.viewSplitToolStripSplitButton.Enabled = false;
-        //        DatabaseMetaData selectedTable = (DatabaseMetaData)this.cboTable.ComboBox.SelectedValue;
-
-        //        if (selectedTable.TABLE_NAME == TextStrings.PleaseSelectTable) return;
-
-        //        this.viewSplitToolStripSplitButton.Enabled = true; // enable user to generate diagram
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _errorService.LogAndDisplayErrorMessage(ex);
-        //    }
-        //    finally { Cursor.Current = Cursors.Default; }
-        //}
-
-        //private void cboDatabase_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        Cursor.Current = Cursors.WaitCursor;
-
-        //        // disable event as new data will be bound and trigger this event & disable any user interaction until tables retrieved
-        //        this.cboTable.SelectedIndexChanged -= new System.EventHandler(this.cboTable_SelectedIndexChanged);
-        //        this.cboTable.Enabled = false;
-
-        //        // clear any existing diagram
-        //        sqlDependencyDiagram.BeginUpdate();
-        //        sqlDependencyDiagram.Model.Clear();
-        //        sqlDependencyDiagram.View.SelectionList.Clear();
-        //        sqlDependencyDiagram.EndUpdate();
-
-        //        AreToolStripButtonsEnabled(); // disable appropiate buttons
-
-        //        _databaseCommandHandler.DatabaseSelectionCommand.Execute(_sharedData);
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _errorService.LogAndDisplayErrorMessage(ex);
-        //    }
-        //    finally 
-        //    {
-        //        // enable combo and event
-        //        this.cboTable.SelectedIndexChanged += new System.EventHandler(this.cboTable_SelectedIndexChanged);
-        //        this.cboTable.Enabled = true;
-        //        Cursor.Current = Cursors.Default;
-        //    }
-        //}
 
         private void compactViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -849,7 +694,7 @@ namespace DatabaseDiagram
             try
             {
                 // set the status depending on the diagram
-                printToolStripButton.Enabled = exportToolStripButton.Enabled = saveToolStripButton.Enabled = _exportCommandHandler.ExportCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
+                printToolStripButton.Enabled = exportToolStripButton.Enabled = _exportCommandHandler.ExportCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
             }
             catch (Exception ex)
             {
