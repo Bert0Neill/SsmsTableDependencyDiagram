@@ -46,6 +46,7 @@ namespace DatabaseDiagram
         private PrintDiagramCommandHandler _printCommandHandler; // print diagram
         private DatabaseComboCommandHandler _databaseCommandHandler; // database combobox
         private TableComboCommandHandler _tableComboCommandHandler; // table combobox
+        //private NodeClickCommandHandler _nodeClickCommandHandler;
 
         #endregion
 
@@ -90,7 +91,10 @@ namespace DatabaseDiagram
                 _tableComboCommandHandler = new TableComboCommandHandler(this.viewSplitToolStripSplitButton, _errorService);
                 cboTable.SelectedIndexChanged += (s, e) => _tableComboCommandHandler.Execute(this.cboTable.ComboBox.SelectedValue);
 
-               
+
+                //_nodeClickCommandHandler = new NodeClickCommandHandler(sqlDependencyDiagram, _errorService);
+                //this.sqlDependencyDiagram.EventSink.NodeClick += (evtArgs) => _nodeClickCommandHandler.Execute(evtArgs);
+
 
                 Log.Information("Initialised DiagramGenerator ctor - SharedData");
             }
@@ -124,12 +128,8 @@ namespace DatabaseDiagram
             this.sqlDependencyDiagram.Model.BoundaryConstraintsEnabled = false;
             this.sqlDependencyDiagram.Model.MinimumSize = sqlDependencyDiagram.View.ClientRectangle.Size;
             this.sqlDependencyDiagram.Model.SizeToContent = true;
-
-            // sqlDependencyDiagram is the instance of the Diagram control.
             this.sqlDependencyDiagram.EventSink.NodeMouseEnter += EventSink_NodeMouseEnter;
             this.sqlDependencyDiagram.EventSink.NodeMouseLeave += EventSink_NodeMouseLeave;
-            this.sqlDependencyDiagram.EventSink.NodeClick += EventSink_NodeClick;
-
             this.sqlDependencyDiagram.View.SelectionList.Clear();
         }
         #endregion
@@ -144,7 +144,6 @@ namespace DatabaseDiagram
             {
                 this.sqlDependencyDiagram.View.SelectionList.Clear();                
                 this.sqlDependencyDiagram.Controller.ActivateTool("PanTool");
-
             }
             catch (Exception ex)
             {
@@ -164,65 +163,6 @@ namespace DatabaseDiagram
         private void EventSink_NodeMouseEnter(NodeMouseEventArgs evtArgs)
         {
             this.sqlDependencyDiagram.Controller.ActivateTool("SelectTool");
-        }
-
-        private void EventSink_NodeClick(NodeMouseEventArgs evtArgs)
-        {
-            try
-            {
-                if (sqlDependencyDiagram.Controller.TextEditor.IsEditing)
-                {
-                    sqlDependencyDiagram.Controller.TextEditor.EndEdit(true);
-                }
-                NodeCollection nodes = sqlDependencyDiagram.Controller.GetAllNodesAtPoint(sqlDependencyDiagram.Model, sqlDependencyDiagram.Controller.MouseLocation) as NodeCollection;
-
-                foreach (Node gnode in nodes)
-                {
-                    if (gnode is TextNode)
-                    {
-                        sqlDependencyDiagram.Controller.TextEditor.BeginEdit(gnode, false);
-                    }
-                    if (gnode.Name == TextStrings.BaseNode)
-                    {
-                        if (prevbNode == null)
-                            prevbNode = gnode;
-                        if (prevbNode == gnode)
-                        {
-                            ((FilledPath)gnode).FillStyle.Color = Color.FromArgb(117, 186, 255);
-                        }
-                        else
-                        {
-                            ((FilledPath)gnode).FillStyle.Color = Color.FromArgb(117, 186, 255);
-                            ((FilledPath)prevbNode).FillStyle.Color = Color.WhiteSmoke;
-                            prevbNode = gnode;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }
-
-        private void saveToolStripButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                this.saveFileDialog1.FileName = "Diagram.edd";
-
-                saveFileDialog1.Title = TextStrings.SaveFile;
-                saveFileDialog1.Filter = @"EDD file(*.edd)|*.edd|XML file(*.xml)|*.xml|All files|*.*";
-
-                if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    sqlDependencyDiagram.SaveBinary(saveFileDialog1.FileName);
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
         }
 
         private void DiagramGenerator_Load(object sender, EventArgs e)
