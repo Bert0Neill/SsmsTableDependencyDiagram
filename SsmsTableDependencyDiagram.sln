@@ -30,18 +30,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.Extension", "TableDiagramExtension\SsmsTableDependencyDiagram.Extension.csproj", "{69F3E40D-1BF9-4647-8EF0-13FAE6E51F02}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commands", "Commands", "{178B4EF5-8C82-4B9E-8CAA-FB21C138492E}"
-	ProjectSection(SolutionItems) = preProject
-		C:\Users\owner\Downloads\Commands\AreToolStripButtonsEnabled.txt = C:\Users\owner\Downloads\Commands\AreToolStripButtonsEnabled.txt
-		C:\Users\owner\Downloads\Commands\cboDatabase_SelectedIndexChanged.txt = C:\Users\owner\Downloads\Commands\cboDatabase_SelectedIndexChanged.txt
-		C:\Users\owner\Downloads\Commands\cboTable_SelectedIndexChanged.txt = C:\Users\owner\Downloads\Commands\cboTable_SelectedIndexChanged.txt
-		C:\Users\owner\Downloads\Commands\compactViewToolStripMenuItem_Click.txt = C:\Users\owner\Downloads\Commands\compactViewToolStripMenuItem_Click.txt
-		C:\Users\owner\Downloads\Commands\extendedViewToolStripMenuItem_Click.txt = C:\Users\owner\Downloads\Commands\extendedViewToolStripMenuItem_Click.txt
-		C:\Users\owner\Downloads\Commands\GenerateDiagram.txt = C:\Users\owner\Downloads\Commands\GenerateDiagram.txt
-		C:\Users\owner\Downloads\Commands\InitializeDiagramFromXMLData.txt = C:\Users\owner\Downloads\Commands\InitializeDiagramFromXMLData.txt
-		C:\Users\owner\Downloads\Commands\Load Command v1.txt = C:\Users\owner\Downloads\Commands\Load Command v1.txt
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.Tests", "SsmsTableDependencyDiagram.Tests\SsmsTableDependencyDiagram.Tests.csproj", "{E75BB47B-0742-4784-B7FD-93CDDE38C84F}"
 EndProject
 Global
@@ -156,7 +144,6 @@ Global
 		{322ECE1F-CED6-4733-9CAC-B216ECC1E421} = {7C0F4594-1D0C-422D-A724-1C4E84C7F1FD}
 		{DB76A4C5-D5CA-49F4-B75E-7BA721E09C5A} = {624F3035-4C81-4C7C-99E5-E4DCA586488B}
 		{69F3E40D-1BF9-4647-8EF0-13FAE6E51F02} = {2EFC1308-AC8E-425F-90A2-6A9B8AB6B038}
-		{178B4EF5-8C82-4B9E-8CAA-FB21C138492E} = {A53D91F0-F0B4-4A20-9C48-71F9048AA89D}
 		{E75BB47B-0742-4784-B7FD-93CDDE38C84F} = {7A233ACE-DFEA-407C-A38E-9EA2C5B95215}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
