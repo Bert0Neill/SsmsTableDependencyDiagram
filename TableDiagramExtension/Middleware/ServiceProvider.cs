@@ -3,7 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using SsmsTableDependencyDiagram.Application.Commands;
 using SsmsTableDependencyDiagram.Application.Interfaces;
 using SsmsTableDependencyDiagram.Application.Services;
+using SsmsTableDependencyDiagram.Domain.Models;
 using SsmsTableDependencyDiagram.Infrastructure.Services;
+using Syncfusion.Windows.Forms.Diagram.Controls;
+using System.Windows.Forms;
 
 namespace TableDiagramExtension.Controllers
 {
@@ -24,8 +27,10 @@ namespace TableDiagramExtension.Controllers
             serviceCollection.AddSingleton<ISQLService, SQLService>();
             serviceCollection.AddSingleton<IErrorService, ErrorService>();
             serviceCollection.AddSingleton<IXMLService, XMLService>();
+            //serviceCollection.AddSingleton<IDiagramGeneratorService, DiagramGeneratorService>();
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
+
         }
     }
 }

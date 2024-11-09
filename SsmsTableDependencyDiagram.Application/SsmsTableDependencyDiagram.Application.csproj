@@ -341,6 +341,7 @@
     </Compile>
     <Compile Include="Services\ConvertService.cs" />
     <Compile Include="Services\DiagramGeneratorService.cs" />
+    <Compile Include="Interfaces\IDiagramGeneratorService.cs" />
     <Compile Include="Services\XMLService.cs" />
   </ItemGroup>
   <ItemGroup />
