@@ -10,21 +10,15 @@ using SsmsTableDependencyDiagram.Application.Interfaces;
 using SsmsTableDependencyDiagram.Application.Services;
 using SsmsTableDependencyDiagram.Domain.Models;
 using SsmsTableDependencyDiagram.Domain.Resources;
-using SsmsTableDependencyDiagram.Infrastructure.Services;
 using Syncfusion.Windows.Forms.Diagram;
 using Syncfusion.Windows.Forms.Diagram.Controls;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
 using TableDiagramExtension.Controllers;
-using static SsmsTableDependencyDiagram.Domain.Models.CustomDiagramTable;
 
 namespace DatabaseDiagram
 {
@@ -65,23 +59,25 @@ namespace DatabaseDiagram
                 _sharedData = sharedData;
 
                 InitializeComponent();
+
                 sqlDependencyDiagram.BeginUpdate();
-                this.sqlDependencyDiagram.Model.BoundaryConstraintsEnabled = false;
-                this.sqlDependencyDiagram.Model.LineStyle.LineColor = Color.LightGray;
-                this.sqlDependencyDiagram.Model.RenderingStyle.SmoothingMode = SmoothingMode.HighQuality;
-                InitailizeDiagram();
+                sqlDependencyDiagram.Model.BoundaryConstraintsEnabled = false;
+                sqlDependencyDiagram.Model.LineStyle.LineColor = Color.LightGray;
+                sqlDependencyDiagram.Model.RenderingStyle.SmoothingMode = SmoothingMode.HighQuality;
+                sqlDependencyDiagram.View.SelectionList.Clear();
+                sqlDependencyDiagram.Controller.ActivateTool("PanTool");
                 DiagramAppearance();
                 sqlDependencyDiagram.EndUpdate();
 
                 // bind print button to command handler
                 _printCommandHandler = new PrintDiagramCommandHandler(_errorService);
-                this.printToolStripButton.Click += (s, e) => _printCommandHandler.PrintCommand.Execute(new Tuple<Diagram>(sqlDependencyDiagram));
+                printToolStripButton.Click += (s, e) => _printCommandHandler.PrintCommand.Execute(new Tuple<Diagram>(sqlDependencyDiagram));
 
                 // bind buttons to command handler
                 _exportCommandHandler = new ExportDiagramCommandHandler(_errorService);                
-                this.pngToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
-                this.jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
-                this.gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
+                pngToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
+                jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
+                gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
 
                 // bind database combo to command handler
                 _databaseCommandHandler = new DatabaseComboCommandHandler(_sqlService, _errorService, _sharedData, cboTable, sqlDependencyDiagram, this);
@@ -106,48 +102,28 @@ namespace DatabaseDiagram
         #region Private Methods
 
         /// <summary>
-        /// Change's the appearance of the Diagram 
+        /// Configure the appearance of the Diagram 
         /// </summary>
         private void DiagramAppearance()
         {
-
-            this.sqlDependencyDiagram.HorizontalRuler.BackgroundColor = Color.White;
-            this.sqlDependencyDiagram.VerticalRuler.BackgroundColor = Color.White;
-            this.sqlDependencyDiagram.View.Grid.GridStyle = GridStyle.Line;
-            this.sqlDependencyDiagram.View.Grid.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-            this.sqlDependencyDiagram.View.Grid.Color = Color.LightGray;
-            this.sqlDependencyDiagram.View.Grid.VerticalSpacing = 15;
-            this.sqlDependencyDiagram.View.Grid.HorizontalSpacing = 15;
-            this.sqlDependencyDiagram.Model.BackgroundStyle.GradientCenter = 0.5f;
-            this.sqlDependencyDiagram.View.HandleRenderer.HandleColor = Color.AliceBlue;
-            this.sqlDependencyDiagram.View.HandleRenderer.HandleOutlineColor = Color.SkyBlue;
-            this.sqlDependencyDiagram.Model.DocumentSize = new PageSize(this.sqlDependencyDiagram.View.ClientRectangle.Size.Width, sqlDependencyDiagram.View.ClientRectangle.Size.Height);
-            this.sqlDependencyDiagram.Model.BoundaryConstraintsEnabled = false;
-            this.sqlDependencyDiagram.Model.MinimumSize = sqlDependencyDiagram.View.ClientRectangle.Size;
-            this.sqlDependencyDiagram.Model.SizeToContent = true;
-            this.sqlDependencyDiagram.EventSink.NodeMouseEnter += EventSink_NodeMouseEnter;
-            this.sqlDependencyDiagram.EventSink.NodeMouseLeave += EventSink_NodeMouseLeave;
-            this.sqlDependencyDiagram.View.SelectionList.Clear();
+            sqlDependencyDiagram.HorizontalRuler.BackgroundColor = Color.White;
+            sqlDependencyDiagram.VerticalRuler.BackgroundColor = Color.White;
+            sqlDependencyDiagram.View.Grid.GridStyle = GridStyle.Line;
+            sqlDependencyDiagram.View.Grid.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+            sqlDependencyDiagram.View.Grid.Color = Color.LightGray;
+            sqlDependencyDiagram.View.Grid.VerticalSpacing = 15;
+            sqlDependencyDiagram.View.Grid.HorizontalSpacing = 15;
+            sqlDependencyDiagram.Model.BackgroundStyle.GradientCenter = 0.5f;
+            sqlDependencyDiagram.View.HandleRenderer.HandleColor = Color.AliceBlue;
+            sqlDependencyDiagram.View.HandleRenderer.HandleOutlineColor = Color.SkyBlue;
+            sqlDependencyDiagram.Model.DocumentSize = new PageSize(sqlDependencyDiagram.View.ClientRectangle.Size.Width, sqlDependencyDiagram.View.ClientRectangle.Size.Height);
+            sqlDependencyDiagram.Model.BoundaryConstraintsEnabled = false;
+            sqlDependencyDiagram.Model.MinimumSize = sqlDependencyDiagram.View.ClientRectangle.Size;
+            sqlDependencyDiagram.Model.SizeToContent = true;
+            sqlDependencyDiagram.EventSink.NodeMouseEnter += EventSink_NodeMouseEnter;
+            sqlDependencyDiagram.EventSink.NodeMouseLeave += EventSink_NodeMouseLeave;
+            sqlDependencyDiagram.View.SelectionList.Clear();
         }
-        #endregion
-
-        #region Initailize Diagram 
-        /// <summary>
-        /// Initializes the diagram
-        /// </summary>
-        private void InitailizeDiagram()
-        {
-            try
-            {
-                this.sqlDependencyDiagram.View.SelectionList.Clear();                
-                this.sqlDependencyDiagram.Controller.ActivateTool("PanTool");
-            }
-            catch (Exception ex)
-            {
-                _errorService.LogAndDisplayErrorMessage(ex);
-            }
-        }        
-
         #endregion
 
         #region Event Handlers
@@ -168,27 +144,28 @@ namespace DatabaseDiagram
             {
                 Cursor.Current = Cursors.WaitCursor;
 
-                List<string> activeDBs;
-                this.cboDatabase.Enabled = false;
-                this.cboTable.Enabled = false;
+                // disable combo events while populating
+                cboDatabase.Enabled = false;
+                cboTable.Enabled = false;
 
                 // retrieve dropdown values
-                activeDBs = _sqlService.RetrieveDatabases(this._sharedData.SqlOlapConnectionInfoBase.ConnectionString);
-
+                List<string> activeDBs = _sqlService.RetrieveDatabases(_sharedData.SqlOlapConnectionInfoBase.ConnectionString);
                 activeDBs.Insert(0, TextStrings.PleaseSelectDatabase);
-
                 if (activeDBs.Count > 1)
                 {
-                    this.cboDatabase.ComboBox.DataSource = null;
-                    this.cboDatabase.ComboBox.DataSource = activeDBs;
-                    this.cboDatabase.Enabled = true;
+                    cboDatabase.ComboBox.DataSource = null;
+                    cboDatabase.ComboBox.DataSource = activeDBs;
+                    
                 }
             }
             catch (Exception ex)
             {
                 _errorService.LogAndDisplayErrorMessage(ex);
             }
-            finally { Cursor.Current = Cursors.Default; }
+            finally {
+                cboDatabase.Enabled = true;
+                Cursor.Current = Cursors.Default; 
+            }
         }
 
         private void compactViewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -196,7 +173,6 @@ namespace DatabaseDiagram
             Cursor.Current = Cursors.WaitCursor;
 
             _isCompact = true;
-            //this.GenerateDiagram(true);
             _diagramGeneratorService.GenerateDiagram(true);
 
             sqlDependencyDiagram.Enabled = true; // disable for toolstrip enablement
@@ -210,7 +186,6 @@ namespace DatabaseDiagram
             Cursor.Current = Cursors.WaitCursor;
 
             _isCompact = false;
-            //this.GenerateDiagram(false);
             _diagramGeneratorService.GenerateDiagram(false);
 
             sqlDependencyDiagram.Enabled = true; // disable for toolstrip enablement
