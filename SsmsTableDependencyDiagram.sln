@@ -22,8 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6) Misc", "6) Misc", "{A53D
 		TableDiagramExtension\Misc\Table dependency Diagram - User Guide.docx = TableDiagramExtension\Misc\Table dependency Diagram - User Guide.docx
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SsmsTableDependencyDiagram.MsTests", "SsmsTableDependencyDiagram.MsTests\SsmsTableDependencyDiagram.MsTests.csproj", "{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.Infrastructure", "SsmsTableDependencyDiagram.Infrastructure\SsmsTableDependencyDiagram.Infrastructure.csproj", "{62161F2B-0289-4E8F-B717-BBAE8C9F6BAB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.Application", "SsmsTableDependencyDiagram.Application\SsmsTableDependencyDiagram.Application.csproj", "{322ECE1F-CED6-4733-9CAC-B216ECC1E421}"
@@ -34,9 +32,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commands", "Commands", "{178B4EF5-8C82-4B9E-8CAA-FB21C138492E}"
 	ProjectSection(SolutionItems) = preProject
-		cboDatabase_SelectedIndexChanged.txt = cboDatabase_SelectedIndexChanged.txt
-		cboTable_SelectedIndexChanged.txt = cboTable_SelectedIndexChanged.txt
+		C:\Users\owner\Downloads\Commands\AreToolStripButtonsEnabled.txt = C:\Users\owner\Downloads\Commands\AreToolStripButtonsEnabled.txt
+		C:\Users\owner\Downloads\Commands\cboDatabase_SelectedIndexChanged.txt = C:\Users\owner\Downloads\Commands\cboDatabase_SelectedIndexChanged.txt
+		C:\Users\owner\Downloads\Commands\cboTable_SelectedIndexChanged.txt = C:\Users\owner\Downloads\Commands\cboTable_SelectedIndexChanged.txt
+		C:\Users\owner\Downloads\Commands\compactViewToolStripMenuItem_Click.txt = C:\Users\owner\Downloads\Commands\compactViewToolStripMenuItem_Click.txt
+		C:\Users\owner\Downloads\Commands\extendedViewToolStripMenuItem_Click.txt = C:\Users\owner\Downloads\Commands\extendedViewToolStripMenuItem_Click.txt
+		C:\Users\owner\Downloads\Commands\GenerateDiagram.txt = C:\Users\owner\Downloads\Commands\GenerateDiagram.txt
+		C:\Users\owner\Downloads\Commands\InitializeDiagramFromXMLData.txt = C:\Users\owner\Downloads\Commands\InitializeDiagramFromXMLData.txt
+		C:\Users\owner\Downloads\Commands\Load Command v1.txt = C:\Users\owner\Downloads\Commands\Load Command v1.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsTableDependencyDiagram.Tests", "SsmsTableDependencyDiagram.Tests\SsmsTableDependencyDiagram.Tests.csproj", "{E75BB47B-0742-4784-B7FD-93CDDE38C84F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,24 +57,6 @@ Global
 		Release-XML|x86 = Release-XML|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Debug|arm64.Build.0 = Debug|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Debug|x86.Build.0 = Debug|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release|arm64.ActiveCfg = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release|arm64.Build.0 = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release|x86.ActiveCfg = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release|x86.Build.0 = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release-XML|Any CPU.ActiveCfg = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release-XML|Any CPU.Build.0 = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release-XML|arm64.ActiveCfg = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release-XML|arm64.Build.0 = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release-XML|x86.ActiveCfg = Release|Any CPU
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2}.Release-XML|x86.Build.0 = Release|Any CPU
 		{62161F2B-0289-4E8F-B717-BBAE8C9F6BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{62161F2B-0289-4E8F-B717-BBAE8C9F6BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62161F2B-0289-4E8F-B717-BBAE8C9F6BAB}.Debug|arm64.ActiveCfg = Debug|Any CPU
@@ -141,17 +129,35 @@ Global
 		{69F3E40D-1BF9-4647-8EF0-13FAE6E51F02}.Release-XML|arm64.Build.0 = Release|Any CPU
 		{69F3E40D-1BF9-4647-8EF0-13FAE6E51F02}.Release-XML|x86.ActiveCfg = Release|x86
 		{69F3E40D-1BF9-4647-8EF0-13FAE6E51F02}.Release-XML|x86.Build.0 = Release|x86
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Debug|arm64.Build.0 = Debug|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Debug|x86.Build.0 = Debug|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release|arm64.ActiveCfg = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release|arm64.Build.0 = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release|x86.ActiveCfg = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release|x86.Build.0 = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release-XML|Any CPU.ActiveCfg = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release-XML|Any CPU.Build.0 = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release-XML|arm64.ActiveCfg = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release-XML|arm64.Build.0 = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release-XML|x86.ActiveCfg = Release|Any CPU
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F}.Release-XML|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{4BC19B3C-DD89-4CDA-B2AF-B92496B1B3B2} = {7A233ACE-DFEA-407C-A38E-9EA2C5B95215}
 		{62161F2B-0289-4E8F-B717-BBAE8C9F6BAB} = {33DB814A-EB47-4F3C-8DEB-2A353A927700}
 		{322ECE1F-CED6-4733-9CAC-B216ECC1E421} = {7C0F4594-1D0C-422D-A724-1C4E84C7F1FD}
 		{DB76A4C5-D5CA-49F4-B75E-7BA721E09C5A} = {624F3035-4C81-4C7C-99E5-E4DCA586488B}
 		{69F3E40D-1BF9-4647-8EF0-13FAE6E51F02} = {2EFC1308-AC8E-425F-90A2-6A9B8AB6B038}
 		{178B4EF5-8C82-4B9E-8CAA-FB21C138492E} = {A53D91F0-F0B4-4A20-9C48-71F9048AA89D}
+		{E75BB47B-0742-4784-B7FD-93CDDE38C84F} = {7A233ACE-DFEA-407C-A38E-9EA2C5B95215}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AB22F1D8-F277-499D-AE3F-E5AA7CC22269}

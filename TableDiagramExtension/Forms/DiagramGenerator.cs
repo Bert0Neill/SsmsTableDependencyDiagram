@@ -24,7 +24,7 @@ namespace DatabaseDiagram
 {
     public partial class DiagramGenerator : Form, IToolStripButtonEnabler
     {
-        #region Members
+        #region Class Variables
         private bool _isCompact;
         private SharedData _sharedData = null;
         private Node _prevbNode = null;
@@ -37,7 +37,7 @@ namespace DatabaseDiagram
         private readonly IDiagramGeneratorService _diagramGeneratorService;
         #endregion
 
-        #region Commands
+        #region Class Commands
         private ExportDiagramCommandHandler _exportCommandHandler; // export diagram
         private PrintDiagramCommandHandler _printCommandHandler; // print diagram
         private DatabaseComboCommandHandler _databaseCommandHandler; // database combobox
@@ -73,7 +73,7 @@ namespace DatabaseDiagram
                 _printCommandHandler = new PrintDiagramCommandHandler(_errorService);
                 printToolStripButton.Click += (s, e) => _printCommandHandler.PrintCommand.Execute(new Tuple<Diagram>(sqlDependencyDiagram));
 
-                // bind buttons to command handler
+                // bind export buttons to command handler
                 _exportCommandHandler = new ExportDiagramCommandHandler(_errorService);                
                 pngToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
                 jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
@@ -96,10 +96,6 @@ namespace DatabaseDiagram
                 _errorService.LogAndDisplayErrorMessage(ex);
             }
         }
-
-        #endregion
-
-        #region Private Methods
 
         /// <summary>
         /// Configure the appearance of the Diagram 
