@@ -180,11 +180,6 @@ namespace SsmsTableDependencyDiagram.Application.Services
                     // create table node on diagram
                     _sqlDependencyDiagram.Model.Nodes[table].EditStyle.AllowDelete = false;
                     _sqlDependencyDiagram.Model.Nodes[table].PinPoint = new PointF(pointLeft, pointRight);
-
-                    //// centre last node as that was the table selected
-                    //if (tableCount == dependencyTables.Count) {
-                    //    _sqlDependencyDiagram.Controller.BringToCenter(_sqlDependencyDiagram.View.SelectionList[0].BoundingRectangle);
-                    //}
                 }
 
                 foreach (DataRow row in Relationships.Rows)
