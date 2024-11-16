@@ -71,13 +71,13 @@ namespace DatabaseDiagram
 
                 // bind print button to command handler
                 _printCommandHandler = new PrintDiagramCommandHandler(_errorService);
-                printToolStripButton.Click += (s, e) => _printCommandHandler.PrintCommand.Execute(new Tuple<Diagram>(sqlDependencyDiagram));
+                printToolStripButton.Click += (s, e) => _printCommandHandler.Execute(new Tuple<Diagram>(sqlDependencyDiagram));
 
                 // bind export buttons to command handler
                 _exportCommandHandler = new ExportDiagramCommandHandler(_errorService);                
-                pngToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
-                jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
-                gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.ExportCommand.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
+                pngToolStripMenuItem.Click += (s, e) => _exportCommandHandler.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Png, sqlDependencyDiagram));
+                jpegToolStripMenuItem.Click += (s, e) => _exportCommandHandler.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Jpeg, sqlDependencyDiagram));
+                gifToolStripMenuItem.Click += (s, e) => _exportCommandHandler.Execute(new Tuple<ImageFormat, Diagram>(ImageFormat.Gif, sqlDependencyDiagram));
 
                 // bind database combo to command handler
                 _databaseCommandHandler = new DatabaseComboCommandHandler(_sqlService, _errorService, _sharedData, cboTable, sqlDependencyDiagram, this);
@@ -198,7 +198,7 @@ namespace DatabaseDiagram
             try
             {
                 // set the status depending on the diagram
-                printToolStripButton.Enabled = exportToolStripButton.Enabled = _exportCommandHandler.ExportCommand.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
+                printToolStripButton.Enabled = exportToolStripButton.Enabled = _exportCommandHandler.CanExecute(sqlDependencyDiagram.Model.Nodes.Count);
             }
             catch (Exception ex)
             {

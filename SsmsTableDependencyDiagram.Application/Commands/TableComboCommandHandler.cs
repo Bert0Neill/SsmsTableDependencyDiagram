@@ -15,7 +15,9 @@ namespace SsmsTableDependencyDiagram.Application.Commands
         public TableComboCommandHandler(
             ToolStripDropDownButton viewSplitToolStripSplitButton,
             IErrorService errorService)
-            : base(param => { }, param => true) 
+            : base(
+                param => ((TableComboCommandHandler)param).Execute(param),
+                param => ((TableComboCommandHandler)param).CanExecuteLogic(param))
         {
             _viewSplitToolStripSplitButton = viewSplitToolStripSplitButton ?? throw new ArgumentNullException(nameof(viewSplitToolStripSplitButton));
             _errorService = errorService ?? throw new ArgumentNullException(nameof(errorService));
@@ -41,6 +43,13 @@ namespace SsmsTableDependencyDiagram.Application.Commands
             {
                 Cursor.Current = Cursors.Default;
             }
+        }
+
+        private bool CanExecuteLogic(object parameter)
+        {
+            // allow execution if a valid table is selected
+            var selectedTable = parameter as DatabaseMetaData;
+            return selectedTable != null && selectedTable.TABLE_NAME != TextStrings.PleaseSelectTable;
         }
     }
 }

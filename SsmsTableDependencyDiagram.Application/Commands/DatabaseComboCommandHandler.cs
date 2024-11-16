@@ -26,15 +26,17 @@ namespace SsmsTableDependencyDiagram.Application.Commands
             ToolStripComboBox cboTable,
             Diagram sqlDependencyDiagram,
             IToolStripButtonEnabler callbackEvents)
-              : base(param => { }, param => true) // Default no-op action and always-true condition
-        {
-            _sqlService = sqlService;
-            _errorService = errorService;
-            _sharedData = sharedData;
-            _cboTable = cboTable;
-            _sqlDependencyDiagram = sqlDependencyDiagram;
-            _callbackEvents = callbackEvents;
-        }
+        : base(
+            param => ((DatabaseComboCommandHandler)param).Execute(param),
+            param => ((DatabaseComboCommandHandler)param).CanExecuteLogic(param))
+            {
+                _sqlService = sqlService;
+                _errorService = errorService;
+                _sharedData = sharedData;
+                _cboTable = cboTable;
+                _sqlDependencyDiagram = sqlDependencyDiagram;
+                _callbackEvents = callbackEvents;
+            }
 
         public void Execute(object parameter)
         {
@@ -86,6 +88,14 @@ namespace SsmsTableDependencyDiagram.Application.Commands
                 _callbackEvents.SubscribeToTableEvent();
                 Cursor.Current = Cursors.Default;
             }
+        }
+
+        private bool CanExecuteLogic(object parameter)
+        {
+            // ensure a valid database is selected
+            return parameter is string selectedDatabase &&
+                   !string.IsNullOrWhiteSpace(selectedDatabase) &&
+                   selectedDatabase != TextStrings.PleaseSelectDatabase;
         }
     }
 }

@@ -9,77 +9,84 @@ using System.Windows.Forms;
 
 namespace SsmsTableDependencyDiagram.Application.Commands
 {
-    public class ExportDiagramCommandHandler
+    public class ExportDiagramCommandHandler : RelayCommand
     {
-        public RelayCommand ExportCommand { get; }
-
-        private readonly IErrorService _errorService;
+        private static  IErrorService _errorService;
 
         public ExportDiagramCommandHandler(IErrorService errorService)
+            : base(execute: OnExecute, canExecute: CanExecuteLogic)
         {
-            _errorService = errorService;
-
-            ExportCommand = new RelayCommand(
-               execute: OnExecute,
-               canExecute: CanShowExport);
+            _errorService = errorService ?? throw new ArgumentNullException(nameof(errorService));
         }
 
-        // The logic to determine if the button can be clicked
-        private bool CanShowExport(object parameter)
+        //logic to determine if the button can be clicked
+        private static bool CanExecuteLogic(object parameter)
         {
-            if (parameter is int) return (int)parameter > 0;
-            else return false; // default
-        }
-
-        // Method to raise CanExecuteChanged for dynamic updates
-        public void UpdateButtonState()
-        {
-            ExportCommand.RaiseCanExecuteChanged();
-        }
-
-        private void OnExecute(object parameter)
-        {
-            ImageFormat imageFormat;
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            Diagram sqlDependencyDiagram;
-
-            if (parameter is Tuple<ImageFormat, Diagram> tuple)
+            if (parameter is int nodeCount)
             {
-                imageFormat = tuple.Item1;
-                sqlDependencyDiagram = tuple.Item2;
-
-                saveFileDialog.FileName = "Diagram.edd";
-                saveFileDialog.Title = TextStrings.SaveFile;
-
-                if (imageFormat == ImageFormat.Png)
-                {
-                    saveFileDialog.Filter = @"W3C Portable Network Graphics(*.png)|*.png";
-                }
-                else if (imageFormat == ImageFormat.Jpeg)
-                {
-                    saveFileDialog.Filter = @"Joint Photographic Experts Group(*.jpeg)|*.jpeg";
-                }
-                else if (imageFormat == ImageFormat.Gif)
-                {
-                    saveFileDialog.Filter = @"Graphics Interchange Format(*.gif)|*.gif";
-                }
-
-                saveFileDialog.Title = "Export Diagram As:";
-                saveFileDialog.FileName = "Diagram";
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    SaveImage(saveFileDialog.FileName, sqlDependencyDiagram, imageFormat);
-                }
+                return nodeCount > 0; // button is enabled only when there are nodes
             }
+            return false;
         }
 
-        private void SaveImage(string filename, Diagram sqlDependencyDiagram, ImageFormat imageFormat)
+        //execution logic for the command
+        private static void OnExecute(object parameter)
         {
             try
             {
-                Image img = sqlDependencyDiagram.View.ExportDiagramAsImage(false);
-                img.Save(filename, imageFormat);
+                if (parameter is Tuple<ImageFormat, Diagram> tuple)
+                {
+                    ImageFormat imageFormat = tuple.Item1;
+                    Diagram sqlDependencyDiagram = tuple.Item2;
+
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        FileName = "Diagram",
+                        Title = TextStrings.SaveFile,
+                        Filter = GetFilter(imageFormat)
+                    })
+                    {
+                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            SaveImage(saveFileDialog.FileName, sqlDependencyDiagram, imageFormat);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorService.LogAndDisplayErrorMessage(ex);
+            }
+        }
+
+        //retrieves the appropriate file filter based on the image format
+        private static string GetFilter(ImageFormat imageFormat)
+        {
+            switch (imageFormat)
+            {
+                case ImageFormat png when png.Equals(ImageFormat.Png):
+                    return @"W3C Portable Network Graphics(*.png)|*.png";
+
+                case ImageFormat jpeg when jpeg.Equals(ImageFormat.Jpeg):
+                    return @"Joint Photographic Experts Group(*.jpeg)|*.jpeg";
+
+                case ImageFormat gif when gif.Equals(ImageFormat.Gif):
+                    return @"Graphics Interchange Format(*.gif)|*.gif";
+
+                default:
+                    return @"All Files(*.*)|*.*";
+            }
+        }
+
+        //saves the diagram as an image
+        private static void SaveImage(string filename, Diagram sqlDependencyDiagram, ImageFormat imageFormat)
+        {
+            try
+            {
+                using (Image img = sqlDependencyDiagram.View.ExportDiagramAsImage(false))
+                {
+                    img.Save(filename, imageFormat);
+                }
             }
             catch (Exception ex)
             {
