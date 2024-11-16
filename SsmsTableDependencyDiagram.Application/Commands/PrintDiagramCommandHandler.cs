@@ -1,13 +1,8 @@
-﻿using Serilog;
-using SsmsTableDependencyDiagram.Application.Commands.RelayCmd;
+﻿using SsmsTableDependencyDiagram.Application.Commands.RelayCmd;
 using SsmsTableDependencyDiagram.Application.Interfaces;
-using SsmsTableDependencyDiagram.Domain.Resources;
 using Syncfusion.Windows.Forms.Diagram.Controls;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Drawing.Printing;
-using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 
 namespace SsmsTableDependencyDiagram.Application.Commands

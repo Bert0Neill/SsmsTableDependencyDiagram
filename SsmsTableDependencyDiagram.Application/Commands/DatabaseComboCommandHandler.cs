@@ -15,8 +15,8 @@ namespace SsmsTableDependencyDiagram.Application.Commands
         private readonly ISQLService _sqlService;
         private readonly IErrorService _errorService;
         private readonly SharedData _sharedData;
-        private readonly ToolStripComboBox cboTable;
-        private readonly Diagram sqlDependencyDiagram;
+        private readonly ToolStripComboBox _cboTable;
+        private readonly Diagram _sqlDependencyDiagram;
         private readonly IToolStripButtonEnabler _callbackEvents;
 
         public DatabaseComboCommandHandler(
@@ -31,8 +31,8 @@ namespace SsmsTableDependencyDiagram.Application.Commands
             _sqlService = sqlService;
             _errorService = errorService;
             _sharedData = sharedData;
-            this.cboTable = cboTable;
-            this.sqlDependencyDiagram = sqlDependencyDiagram;
+            _cboTable = cboTable;
+            _sqlDependencyDiagram = sqlDependencyDiagram;
             _callbackEvents = callbackEvents;
         }
 
@@ -46,21 +46,21 @@ namespace SsmsTableDependencyDiagram.Application.Commands
 
                 // disable event as new data will be bound and trigger this event & disable any user interaction until tables retrieved
                 _callbackEvents.UnsubscribeFromTableEvent();
-                cboTable.Enabled = false;
+                _cboTable.Enabled = false;
 
                 // clear any existing diagram
-                sqlDependencyDiagram.BeginUpdate();
-                sqlDependencyDiagram.Model.Clear();
-                sqlDependencyDiagram.View.SelectionList.Clear();
-                sqlDependencyDiagram.EndUpdate();
+                _sqlDependencyDiagram.BeginUpdate();
+                _sqlDependencyDiagram.Model.Clear();
+                _sqlDependencyDiagram.View.SelectionList.Clear();
+                _sqlDependencyDiagram.EndUpdate();
 
                 _callbackEvents.AreToolStripButtonsEnabled();
 
                 string selectedDatabase = parameter.ToString();
                 if (selectedDatabase == TextStrings.PleaseSelectDatabase)
                 {
-                    this.cboTable.ComboBox.DataSource = null; // reset tables combo
-                    this.cboTable.ComboBox.Enabled = false;
+                    this._cboTable.ComboBox.DataSource = null; // reset tables combo
+                    this._cboTable.ComboBox.Enabled = false;
                     return;
                 }
 
@@ -70,10 +70,10 @@ namespace SsmsTableDependencyDiagram.Application.Commands
                 {
                     var distinctTables = initialData.GroupBy(p => p.TABLE_NAME).Select(g => g.First()).ToList();
 
-                    this.cboTable.ComboBox.DataSource = null;
-                    this.cboTable.ComboBox.DataSource = distinctTables;
-                    this.cboTable.ComboBox.DisplayMember = TextStrings.TABLE_NAME;
-                    this.cboTable.ComboBox.Enabled = true;
+                    this._cboTable.ComboBox.DataSource = null;
+                    this._cboTable.ComboBox.DataSource = distinctTables;
+                    this._cboTable.ComboBox.DisplayMember = TextStrings.TABLE_NAME;
+                    this._cboTable.ComboBox.Enabled = true;
                 }
             }
             catch (Exception ex)
